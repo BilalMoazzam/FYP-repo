@@ -1,0 +1,65 @@
+.metrics-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+  }
+  
+  @media (min-width: 768px) {
+    .metrics-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .metric-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .metric-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .metric-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #f0f4ff;
+    color: #4f46e5;
+    margin-right: 12px;
+  }
+  
+  .metric-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+  }
+  
+  .metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 12px;
+  }
+  
+  .progress-bar {
+    height: 8px;
+    background-color: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background-color: #4f46e5;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  
+  

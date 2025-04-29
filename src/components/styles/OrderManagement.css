@@ -1,0 +1,99 @@
+.order-management {
+    padding: 0;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+  }
+  
+  .order-container {
+    padding: 20px;
+  }
+  
+  .order-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .order-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .filters-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  .order-table-container {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .order-table th,
+  .order-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .order-table th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .order-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .order-table tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .status {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .status-icon {
+    display: inline-block;
+    margin-right: 5px;
+    font-weight: bold;
+  }
+  
+  .status-fulfilled {
+    color: #4caf50;
+  }
+  
+  .status-pending {
+    color: #ff9800;
+  }
+  
+  .status-unfulfilled {
+    color: #f44336;
+  }
+  
+  .dropdown-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+  }
+  
+  .dropdown-btn:hover {
+    color: #333;
+  }
+  
+  

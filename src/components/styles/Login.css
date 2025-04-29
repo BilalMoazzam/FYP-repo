@@ -1,0 +1,201 @@
+/* Ensure HTML and body take full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .auth-page {
+    height: 100vh; /* Make sure it fills the entire viewport */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  
+  .auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .auth-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(2px);
+  }
+  
+  .auth-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .auth-content h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 10px 0;
+    text-align: center;
+  }
+  
+  .auth-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-group {
+    position: relative;
+  }
+  
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .half-width {
+    width: 48%;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #4a90e2;
+    outline: none;
+  }
+  
+  .form-group input.error,
+  .form-group select.error {
+    border-color: #e74c3c;
+  }
+  
+  .error-text {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+  }
+  
+  .error-message {
+    background-color: #fdecea;
+    color: #e74c3c;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+  }
+  
+  .forgot-password {
+    text-align: right;
+    font-size: 14px;
+    color: #4a90e2;
+    cursor: pointer;
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  .auth-button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .auth-button:hover {
+    background-color: #3a7bd5;
+  }
+  
+  .auth-button:disabled {
+    background-color: #a0c4f0;
+    cursor: not-allowed;
+  }
+  
+  .auth-footer {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .auth-footer a {
+    color: #4a90e2;
+    text-decoration: none;
+  }
+  
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 480px) {
+    .auth-container {
+      padding: 15px;
+    }
+  
+    .auth-content {
+      padding: 20px;
+    }
+  
+    .form-row {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .half-width {
+      width: 100%;
+    }
+  }
+  

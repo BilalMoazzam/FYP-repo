@@ -1,0 +1,109 @@
+.inventory-supplier-management {
+  margin-top: 20px;
+}
+
+.supplier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.supplier-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.supplier-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.supplier-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.supplier-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.supplier-card-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.supplier-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.supplier-card-body {
+  padding: 15px;
+}
+
+.supplier-info {
+  margin-bottom: 15px;
+}
+
+.supplier-info p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.info-label {
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+.info-icon {
+  margin-right: 8px;
+  color: #666;
+}
+
+.supplier-info a {
+  color: #2196f3;
+  text-decoration: none;
+}
+
+.supplier-info a:hover {
+  text-decoration: underline;
+}
+
+.supplier-stats {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+}
+

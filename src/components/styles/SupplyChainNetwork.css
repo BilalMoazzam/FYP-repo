@@ -1,0 +1,21 @@
+.network-container {
+    width: 100%;
+    height: 300px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    position: relative;
+  }
+  
+  .network-canvas {
+    width: 100%;
+    height: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .network-container {
+      height: 250px;
+    }
+  }
+  
+  

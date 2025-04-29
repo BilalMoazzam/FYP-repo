@@ -1,0 +1,25 @@
+/* Signup.css inherits most styles from Login.css */
+.signup-page .auth-content {
+    max-width: 500px;
+  }
+  
+  .signup-page .form-row {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .signup-page .half-width {
+    flex: 1;
+  }
+  
+  @media (max-width: 480px) {
+    .signup-page .form-row {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .signup-page .half-width {
+      width: 100%;
+    }
+  }
+  
