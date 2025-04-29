@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import "../styles/Sidebar.css";
 
+
 const Sidebar = () => {
   const [notificationCount, setNotificationCount] = useState(0);
 

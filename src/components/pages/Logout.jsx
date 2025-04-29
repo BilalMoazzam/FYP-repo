@@ -4,14 +4,13 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/Logout.css"
 
-const Logout = () => {
+const Logout = ({ onLogout }) => {
   const [showConfirmation, setShowConfirmation] = useState(true)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const navigate = useNavigate()
 
   // When component mounts, show the confirmation dialog
   useEffect(() => {
-    // If user navigated directly to this page, show confirmation
     document.body.classList.add("logout-page-active")
 
     return () => {
@@ -19,36 +18,23 @@ const Logout = () => {
     }
   }, [])
 
-  // Handle the actual logout process
   const handleLogout = () => {
     setIsLoggingOut(true)
 
-    // Clear session and user-related data
-    clearAppState()
-
-    // Simulate API call to logout (simulate delay for logout animation)
+    // Small timeout to show the loading state
     setTimeout(() => {
-      // Clear user session/token from localStorage and sessionStorage
-      localStorage.removeItem("user")
-      localStorage.removeItem("token")
-      sessionStorage.removeItem("user")
+      // Call the logout handler from parent
+      if (onLogout) {
+        onLogout()
+      }
 
-      // Redirect to login page after state and session cleanup
+      // Navigate to login page
       navigate("/login")
-    }, 500)  // Simulate some delay for a smoother transition
+    }, 800)
   }
 
-  // Function to clear any application-specific state (e.g., Redux, Context)
-  const clearAppState = () => {
-    console.log("Clearing application state...")
-
-    // Example: If using Redux, you might dispatch a reset action
-    // dispatch({ type: 'RESET_APP_STATE' })
-  }
-
-  // Handle Cancel Logout action
   const handleCancel = () => {
-    // Close the confirmation and navigate back to the previous page
+    // Close the confirmation and navigate back to previous page
     setShowConfirmation(false)
     navigate(-1)
   }
@@ -62,18 +48,10 @@ const Logout = () => {
               <h2>Do you want to logout?</h2>
 
               <div className="confirmation-buttons">
-                <button
-                  className="btn-yes"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                >
+                <button className="btn-yes" onClick={handleLogout} disabled={isLoggingOut}>
                   {isLoggingOut ? "Logging out..." : "Yes"}
                 </button>
-                <button
-                  className="btn-no"
-                  onClick={handleCancel}
-                  disabled={isLoggingOut}
-                >
+                <button className="btn-no" onClick={handleCancel} disabled={isLoggingOut}>
                   No
                 </button>
               </div>

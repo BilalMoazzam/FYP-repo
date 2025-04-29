@@ -1,4 +1,3 @@
-/* Global Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -11,26 +10,40 @@ body {
   color: #333;
 }
 
-/* .app {
+/* App container */
+.app {
   display: flex;
-} */
+  min-height: 100vh;
+  width: 100%;
+}
 
+/* Loading state */
+.app-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  font-size: 18px;
+  color: #333;
+}
+
+/* Content area with sidebar */
 .content {
   flex: 1;
-  margin-left: 250px;
-  min-height: 100vh;
+  padding: 20px;
+  margin-left: 250px; /* Adjust based on your sidebar width */
+  transition: margin-left 0.3s ease;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 0;
-    overflow: hidden;
-  }
-
   .content {
     margin-left: 0;
+    padding: 15px;
   }
 }
+
 
 @tailwind base;
 @tailwind components;

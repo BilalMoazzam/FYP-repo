@@ -2,6 +2,10 @@
 .signup-page .auth-content {
     max-width: 500px;
   }
+
+  .signup-page {
+    background-image: url('../../assets/scm-front.jpg');
+  }
   
   .signup-page .form-row {
     display: flex;
