@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import "./App.css"
 
@@ -20,59 +20,55 @@ import Logout from "./components/pages/Logout"
 import Login from "./components/pages/Login"
 import Signup from "./components/pages/Signup"
 import ForgotPassword from "./components/pages/ForgotPassword"
-import AuthService from "./components/services/AuthService"
+import ResetPassword from "./components/pages/ResetPassword"
+import Introduction from "./components/pages/Introduction"
+import { BarcodeScanner } from './components/inventory/barcode-scanner'
+import { CategoryManager } from './components/inventory/category-manager'
+import { ProductDetails } from './components/inventory/product-details'
+import { ProductForm } from './components/inventory/product-form'
+import { ProductList } from './components/inventory/product-list'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    // Check authentication status when component mounts
-    const checkAuthStatus = () => {
-      const authStatus = AuthService.isLoggedIn()
-      setIsLoggedIn(authStatus)
-      setIsLoading(false)
-    }
-
-    checkAuthStatus()
-  }, [])
 
   const handleLogin = () => {
     setIsLoggedIn(true)
   }
 
   const handleLogout = () => {
-    AuthService.logout()
+    localStorage.clear()
     setIsLoggedIn(false)
   }
 
-  if (isLoading) {
-    return <div className="app-loading">Loading...</div>
-  }
-
-  // Completely different layout for auth pages vs app pages
   if (!isLoggedIn) {
     return (
       <Router>
         <Routes>
+          <Route path="/" element={<Introduction />} />
+          <Route path="/intro" element={<Introduction />} />
           <Route path="/login" element={<Login onLoginSuccess={handleLogin} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     )
   }
 
-  // App layout with sidebar for authenticated users
   return (
     <Router>
       <div className="app">
-        <Sidebar />
+        <Sidebar onLogout={handleLogout} />
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/inventory" element={<InventoryManagement />} />
+            <Route path="/barcode-scanner" element={<BarcodeScanner />} />
+            <Route path="/categpry-manager" element={<CategoryManager />} />
+            <Route path="/product-details" element={<ProductDetails />} />
+            <Route path="/product-form" element={<ProductForm />} />
+            <Route path="/product-list" element={<ProductList />} />
             <Route path="/orders" element={<OrderManagement />} />
             <Route path="/supply-chain" element={<SupplyChainOverview />} />
             <Route path="/analytics" element={<AnalyticsReport />} />

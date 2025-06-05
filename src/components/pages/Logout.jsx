@@ -23,13 +23,11 @@ const Logout = ({ onLogout }) => {
 
     // Small timeout to show the loading state
     setTimeout(() => {
-      // Call the logout handler from parent
+      // Call the logout handler from parent - this will handle the redirect
       if (onLogout) {
         onLogout()
       }
-
-      // Navigate to login page
-      navigate("/login")
+      // Don't navigate here - let App.js handle the redirect automatically
     }, 800)
   }
 

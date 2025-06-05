@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/inventory/product-list.jsx", "src/components/inventory/product-form.jsx", "src/components/inventory/product-details.jsx", "src/components/inventory/category-manager.jsx", "src/components/inventory/barcode-scanner.jsx"],
   "exclude": ["node_modules"]
 }

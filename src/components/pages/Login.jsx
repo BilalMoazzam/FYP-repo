@@ -2,21 +2,42 @@
 
 import { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
-import AuthService from "../services/AuthService"
 import "../styles/Login.css"
+import { useApp } from "../../context/AppContext"
 
 const Login = ({ onLoginSuccess }) => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    rememberMe: false,
-    agreeTerms: false,
-  })
-  const [errors, setErrors] = useState({})
-  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const message = location.state?.message || ""
+  const { actions } = useApp()
+  
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  })
+  const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loginError, setLoginError] = useState("")
+
+  // Get success message from location state (e.g., after signup)
+  const successMessage = location.state?.message || ""
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid"
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -25,6 +46,7 @@ const Login = ({ onLoginSuccess }) => {
       [name]: type === "checkbox" ? checked : value,
     })
 
+    // Clear error when user starts typing
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -33,123 +55,93 @@ const Login = ({ onLoginSuccess }) => {
     }
   }
 
-  const validateForm = () => {
-    const newErrors = {}
-
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required"
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required"
-    }
-
-    if (!formData.agreeTerms) {
-      newErrors.agreeTerms = "You must agree to the Terms & Conditions"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!validateForm()) return
+
+    if (!validateForm()) {
+      return
+    }
+
+    setIsSubmitting(true)
+    setLoginError("")
 
     try {
-      setLoading(true)
-      await AuthService.login(formData.username, formData.password, formData.rememberMe)
-      onLoginSuccess && onLoginSuccess()
-      navigate("/")
+      // Use context login action
+      const success = await actions.login(formData.email, formData.password, formData.rememberMe)
+
+      if (success) {
+        if (onLoginSuccess) {
+          onLoginSuccess()
+        }
+        navigate("/")
+      }
     } catch (error) {
       console.error("Login error:", error)
-      setErrors({
-        ...errors,
-        general: "Invalid username or password. Please try again.",
-      })
+      setLoginError(error.message || "Invalid email or password")
     } finally {
-      setLoading(false)
+      setIsSubmitting(false)
     }
-  }
-
-  const handleForgotPassword = () => {
-    navigate("/forgot-password")
   }
 
   return (
-    <div className="auth-page login-page">
-      <div className="auth-container">
-        <div className="auth-content">
-          <h1>Login Page</h1>
-          <p className="auth-subtitle">Fill your information below</p>
+    <div className="enhanced-auth-page">
+      <div className="auth-background-overlay"></div>
 
-          {message && <div className="success-message">{message}</div>}
-          {errors.general && <div className="error-message">{errors.general}</div>}
+      <div className="enhanced-auth-container">
+        <div className="auth-form-box">
+          <div className="auth-header">
+            <h1>Login Page</h1>
+            <p>Fill your information below</p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group">
+          {successMessage && <div className="success-alert">{successMessage}</div>}
+
+          {loginError && <div className="error-alert">{loginError}</div>}
+
+          <form className="enhanced-auth-form" onSubmit={handleSubmit}>
+            <div className="form-field">
               <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
                 onChange={handleChange}
-                className={errors.username ? "error" : ""}
+                className={`form-input ${errors.email ? "error" : ""}`}
               />
-              {errors.username && <span className="error-text">{errors.username}</span>}
+              {errors.email && <span className="field-error">{errors.email}</span>}
             </div>
 
-            <div className="form-group">
+            <div className="form-field">
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className={errors.password ? "error" : ""}
+                className={`form-input ${errors.password ? "error" : ""}`}
               />
-              {errors.password && <span className="error-text">{errors.password}</span>}
-            </div>
-
-            <div className="form-row">
-              <div className="checkbox-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="rememberMe"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                  />
-                  <span>Remember me</span>
-                </label>
-              </div>
-              <div className="forgot-password">
-                <span onClick={handleForgotPassword}>Forgot password?</span>
+              {errors.password && <span className="field-error">{errors.password}</span>}
+              <div className="forgot-password-link">
+                <Link to="/forgot-password">Forget password</Link>
               </div>
             </div>
 
-            <div className="form-row checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="agreeTerms"
-                  checked={formData.agreeTerms}
-                  onChange={handleChange}
-                  className={errors.agreeTerms ? "error" : ""}
-                />
-                <span>Agree with Terms & Conditions</span>
+            <div className="checkbox-section">
+              <label className="custom-checkbox">
+                <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} />
+                <span className="checkbox-mark"></span>
+                Remember me
               </label>
             </div>
-            {errors.agreeTerms && <span className="error-text">{errors.agreeTerms}</span>}
 
-            <button type="submit" className="auth-button" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+            <button type="submit" className="submit-btn" disabled={isSubmitting}>
+              {isSubmitting ? "Logging in..." : "Login"}
             </button>
           </form>
 
-          <div className="auth-footer">
+          <div className="auth-footer-link">
             <p>
-              Don't have an account? <Link to="/signup">Sign up here</Link>
+              Don't have an account? <Link to="/signup">Signup now</Link>
             </p>
           </div>
         </div>

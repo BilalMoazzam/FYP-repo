@@ -87,7 +87,7 @@ const HelpSupport = () => {
               </div>
 
               <div className="help-mascot">
-                {/* <img src="/placeholder.svg?height=150&width=150" alt="Support Mascot" className="mascot-image" /> */}
+                <img src="/placeholder.svg?height=150&width=150" alt="Support Mascot" className="mascot-image" />
                 <div className="question-bubble q1">How do I...</div>
                 <div className="question-bubble q2">Can I...</div>
                 <div className="question-bubble q3">What is...</div>

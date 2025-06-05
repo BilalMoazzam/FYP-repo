@@ -304,9 +304,82 @@ const BlockchainTransaction = () => {
           )}
         </div>
       </div>
+
+      <div className="page-header">
+        <h1>Blockchain Transactions</h1>
+        <p>Track and verify blockchain-based transactions</p>
+      </div>
+
+      <div className="blockchain-content">
+        <div className="blockchain-stats">
+          <div className="stat-card">
+            <h3>Total Transactions</h3>
+            <div className="stat-value">1,456</div>
+          </div>
+          <div className="stat-card">
+            <h3>Verified Transactions</h3>
+            <div className="stat-value">1,445</div>
+          </div>
+          <div className="stat-card">
+            <h3>Pending Verification</h3>
+            <div className="stat-value">11</div>
+          </div>
+          <div className="stat-card">
+            <h3>Success Rate</h3>
+            <div className="stat-value">99.2%</div>
+          </div>
+        </div>
+
+        <div className="transaction-table-section">
+          <div className="table-header">
+            <h2>Recent Transactions</h2>
+            <button className="new-transaction-btn">New Transaction</button>
+          </div>
+
+          <div className="transaction-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Transaction ID</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Timestamp</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#TX-001</td>
+                  <td>Supply Chain</td>
+                  <td>$1,250.00</td>
+                  <td>
+                    <span className="status verified">Verified</span>
+                  </td>
+                  <td>2024-01-15 10:30</td>
+                  <td>
+                    <button className="action-btn view">View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#TX-002</td>
+                  <td>Payment</td>
+                  <td>$850.00</td>
+                  <td>
+                    <span className="status pending">Pending</span>
+                  </td>
+                  <td>2024-01-15 09:15</td>
+                  <td>
+                    <button className="action-btn view">View</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
 
 export default BlockchainTransaction
-

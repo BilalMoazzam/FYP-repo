@@ -236,4 +236,3 @@ const AnalyticsReport = () => {
 }
 
 export default AnalyticsReport
-

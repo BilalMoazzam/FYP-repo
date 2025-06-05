@@ -1,12 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Header from '../layout/Header';
-import SupplyChainMetrics from '../SupplyChainMetrics';
-import SupplyChainNetwork from '../SupplyChainNetwork';
-import ActiveShipments from '../ActiveShipments';
-
-import '../styles/SupplyChainOverview.css';
+import Header from "../layout/Header"
+import SupplyChainMetrics from "../SupplyChainMetrics"
+import SupplyChainNetwork from "../SupplyChainNetwork"
+import ActiveShipments from "../ActiveShipments"
+import "../styles/SupplyChainOverview.css"
 
 const SupplyChainOverview = () => {
   const [metrics, setMetrics] = useState({
