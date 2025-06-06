@@ -14,6 +14,7 @@ import {
   LogOut,
 } from "lucide-react";
 import "../styles/Sidebar.css";
+import logoImage from '../../assets/logo-Image.png';
 
 
 const Sidebar = () => {
@@ -34,7 +35,7 @@ const Sidebar = () => {
     <div className="sidebar">
       <div className="logo-container">
         <div className="logo">
-          <img src="/web-logo.png" alt="StockChain AI" />
+          <img src={logoImage} alt="StockChain AI" />
         </div>
         <h2>StockChain AI</h2>
       </div>
