@@ -1,40 +1,30 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Send } from "lucide-react"
+import { useState } from "react";
+import { Send } from "lucide-react";
 
-const FeedbackForm = () => {
-  const [feedback, setFeedback] = useState("")
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
+const FeedbackForm = ({ onFeedbackSubmit }) => {
+  const [feedback, setFeedback] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!feedback.trim()) return
+    e.preventDefault();
+    if (!feedback.trim()) return;
 
-    setLoading(true)
-
-    // Simulate API call to submit feedback
+    setLoading(true);
     setTimeout(() => {
-      console.log("Feedback submitted:", feedback)
-      setSubmitted(true)
-      setLoading(false)
-      setFeedback("")
-
-      // Reset submitted state after 5 seconds
-      setTimeout(() => {
-        setSubmitted(false)
-      }, 5000)
-    }, 1000)
-  }
-
+      onFeedbackSubmit(feedback);
+      setSubmitted(true);
+      setLoading(false);
+      setFeedback("");
+      setTimeout(() => setSubmitted(false), 5000);
+    }, 1000);
+  };
   return (
     <div className="feedback-form-container">
       <h2>Feedback</h2>
       <div className="feedback-form-wrapper">
-        <div className="feedback-image">
-          <img src="/placeholder.svg?height=200&width=150" alt="Feedback" />
-        </div>
         <div className="feedback-form">
           <h3>Give us some feedback</h3>
           {submitted ? (
@@ -51,7 +41,11 @@ const FeedbackForm = () => {
                   required
                 ></textarea>
               </div>
-              <button type="submit" className="submit-btn" disabled={loading || !feedback.trim()}>
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={loading || !feedback.trim()}
+              >
                 {loading ? (
                   <span className="loading-spinner"></span>
                 ) : (
@@ -66,7 +60,7 @@ const FeedbackForm = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FeedbackForm
+export default FeedbackForm;

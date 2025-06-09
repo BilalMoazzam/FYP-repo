@@ -1,31 +1,43 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Header from "../layout/Header"
-import FAQSection from "../help/FAQSection"
-import SupportCategories from "../help/SupportCategories"
-import FeedbackForm from "../help/FeedbackForm"
-import UserComments from "../help/UserComments"
-import SupportFooter from "../help/SupportFooter"
-import { MessageCircle } from "lucide-react"
-import "../styles/HelpSupport.css"
+import { useState, useEffect } from "react";
+import Header from "../layout/Header";
+import FAQSection from "../help/FAQSection";
+import SupportCategories from "../help/SupportCategories";
+import FeedbackForm from "../help/FeedbackForm";
+import UserComments from "../help/UserComments";
+import SupportFooter from "../help/SupportFooter";
+import { MessageCircle } from "lucide-react";
+import "../styles/HelpSupport.css";
 
 const HelpSupport = () => {
-  const [loading, setLoading] = useState(true)
-  const [showChatSupport, setShowChatSupport] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [showChatSupport, setShowChatSupport] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showDemoPopup, setShowDemoPopup] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setShowDemoPopup(true);
+  };
+
+  const closeDemoPopup = () => {
+    setShowDemoPopup(false);
+    setSelectedCategory(null);
+  };
 
   useEffect(() => {
     // Simulate loading data
     setTimeout(() => {
-      setLoading(false)
-    }, 800)
-  }, [])
+      setLoading(false);
+    }, 800);
+  }, []);
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    if (!searchQuery.trim()) return
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
 
     // Simulate search functionality
     // In a real app, this would search through FAQs and documentation
@@ -48,19 +60,35 @@ const HelpSupport = () => {
         type: "Tutorial",
         link: "#user-tutorial",
       },
-    ].filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    ].filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-    setSearchResults(mockResults)
-  }
+    setSearchResults(mockResults);
+  };
 
   const clearSearch = () => {
-    setSearchQuery("")
-    setSearchResults([])
-  }
+    setSearchQuery("");
+    setSearchResults([]);
+  };
 
   const toggleChatSupport = () => {
-    setShowChatSupport(!showChatSupport)
-  }
+    setShowChatSupport(!showChatSupport);
+  };
+  const [userComments, setUserComments] = useState([]);
+  const handleFeedbackSubmit = (feedbackText) => {
+    const newComment = {
+      id: userComments.length + 1,
+      user: {
+        name: "You",
+        avatar: "/placeholder.svg?height=50&width=50",
+        role: "User",
+      },
+      date: new Date().toLocaleString(),
+      content: feedbackText,
+    };
+    setUserComments([newComment, ...userComments]); // prepend new comment
+  };
 
   return (
     <div className="help-support">
@@ -82,16 +110,13 @@ const HelpSupport = () => {
                 <h1>Do You Have Questions?</h1>
                 <p>We have answers! Find, search, or ask of the team!</p>
                 <p className="help-subtitle">
-                  We've got 2,500 answers to the most common questions on the StockChain AI Inventory ERP.
+                  We've got 2,500 answers to the most common questions on the
+                  StockChain AI Inventory ERP.
                 </p>
               </div>
 
               <div className="help-mascot">
-                <img src="/placeholder.svg?height=150&width=150" alt="Support Mascot" className="mascot-image" />
-                <div className="question-bubble q1">How do I...</div>
-                <div className="question-bubble q2">Can I...</div>
-                <div className="question-bubble q3">What is...</div>
-                <div className="question-bubble q4">Where to...</div>
+                <img className="mascot-image"/>
               </div>
 
               <div className="search-container">
@@ -130,17 +155,36 @@ const HelpSupport = () => {
               </div>
             </div>
 
-            <SupportCategories />
-
+            {/* <SupportCategories /> */}
+            <SupportCategories onCategoryClick={handleCategoryClick} />
+            {showDemoPopup && (
+              <div className="popup-overlay">
+                <div className="popup-box">
+                  <button className="close-popup" onClick={closeDemoPopup}>
+                    ×
+                  </button>
+                  <h2>{selectedCategory?.title}</h2>
+                  <p>
+                    {selectedCategory?.title === "Getting Started" &&
+                      "Here's how to begin using the platform effectively."}
+                    {selectedCategory?.title === "Frequently Asked Questions" &&
+                      "Find answers to the most common user questions."}
+                    {selectedCategory?.title === "Documentation" &&
+                      "Read our official documentation for developers and users."}
+                    {selectedCategory?.title === "Knowledge Base" &&
+                      "Browse articles that explain platform features in depth."}
+                    {selectedCategory?.title === "Contact Support" &&
+                      "Reach out to our support team for personalized help."}
+                  </p>
+                </div>
+              </div>
+            )}
             <FAQSection />
-
             <div className="feedback-section">
-              <FeedbackForm />
-              <UserComments />
+              <FeedbackForm onFeedbackSubmit={handleFeedbackSubmit} />
+              <UserComments comments={userComments} />
             </div>
-
             <SupportFooter />
-
             <button className="chat-support-btn" onClick={toggleChatSupport}>
               <MessageCircle size={24} />
               <span>Live Chat Support</span>
@@ -157,7 +201,10 @@ const HelpSupport = () => {
                 <div className="chat-messages">
                   <div className="message support">
                     <div className="message-avatar">
-                      <img src="/placeholder.svg?height=40&width=40" alt="Support Agent" />
+                      <img
+                        src="/placeholder.svg?height=40&width=40"
+                        alt="Support Agent"
+                      />
                     </div>
                     <div className="message-content">
                       <p className="message-sender">Support Agent</p>
@@ -176,7 +223,7 @@ const HelpSupport = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HelpSupport
+export default HelpSupport;

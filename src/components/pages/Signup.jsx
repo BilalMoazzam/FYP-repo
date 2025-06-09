@@ -158,102 +158,103 @@ const Signup = () => {
 
           <form className="enhanced-auth-form signup-form" onSubmit={handleSubmit}>
             <div className="form-row">
-              <div className="form-field">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className={`form-input ${errors.firstName ? "error" : ""}`}
-                />
-                {errors.firstName && <span className="field-error">{errors.firstName}</span>}
-              </div>
+  <div className="form-field">
+    <label>First Name</label>
+    <input
+      type="text"
+      name="firstName"
+      value={formData.firstName}
+      onChange={handleChange}
+      className={`form-input ${errors.firstName ? "error" : ""}`}
+    />
+    {errors.firstName && <span className="field-error">{errors.firstName}</span>}
+  </div>
 
-              <div className="form-field">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className={`form-input ${errors.lastName ? "error" : ""}`}
-                />
-                {errors.lastName && <span className="field-error">{errors.lastName}</span>}
-              </div>
-            </div>
+  <div className="form-field">
+    <label>Last Name</label>
+    <input
+      type="text"
+      name="lastName"
+      value={formData.lastName}
+      onChange={handleChange}
+      className={`form-input ${errors.lastName ? "error" : ""}`}
+    />
+    {errors.lastName && <span className="field-error">{errors.lastName}</span>}
+  </div>
+</div>
 
-            <div className="form-row">
-              <div className="form-field">
-                <label>Phone No</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className={`form-input ${errors.phone ? "error" : ""}`}
-                  placeholder="03xxxxxxxxx"
-                />
-                {errors.phone && <span className="field-error">{errors.phone}</span>}
-              </div>
+<div className="form-row">
+  <div className="form-field">
+    <label>Phone No</label>
+    <input
+      type="text"
+      name="phone"
+      value={formData.phone}
+      onChange={handleChange}
+      className={`form-input ${errors.phone ? "error" : ""}`}
+      placeholder="03xxxxxxxxx"
+    />
+    {errors.phone && <span className="field-error">{errors.phone}</span>}
+  </div>
 
-              <div className="form-field">
-                <label>Role Selection</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className={`form-input ${errors.role ? "error" : ""}`}
-                >
-                  <option value="">Select Role</option>
-                  {roles.map((role) => (
-                    <option key={role.value} value={role.value}>
-                      {role.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.role && <span className="field-error">{errors.role}</span>}
-              </div>
-            </div>
+  <div className="form-field">
+    <label>Role Selection</label>
+    <select
+      name="role"
+      value={formData.role}
+      onChange={handleChange}
+      className={`form-input ${errors.role ? "error" : ""}`}
+    >
+      <option value="">Select Role</option>
+      {roles.map((role) => (
+        <option key={role.value} value={role.value}>
+          {role.label}
+        </option>
+      ))}
+    </select>
+    {errors.role && <span className="field-error">{errors.role}</span>}
+  </div>
+</div>
 
-            <div className="form-field full-width">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="example@gmail.com"
-                value={formData.email}
-                onChange={handleChange}
-                className={`form-input ${errors.email ? "error" : ""}`}
-              />
-              {errors.email && <span className="field-error">{errors.email}</span>}
-            </div>
+<div className="form-field full-width">
+  <label>Email</label>
+  <input
+    type="email"
+    name="email"
+    placeholder="example@gmail.com"
+    value={formData.email}
+    onChange={handleChange}
+    className={`form-input ${errors.email ? "error" : ""}`}
+  />
+  {errors.email && <span className="field-error">{errors.email}</span>}
+</div>
 
-            <div className="form-row">
-              <div className="form-field">
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`form-input ${errors.password ? "error" : ""}`}
-                />
-                {errors.password && <span className="field-error">{errors.password}</span>}
-              </div>
+<div className="form-row">
+  <div className="form-field">
+    <label>Password</label>
+    <input
+      type="password"
+      name="password"
+      value={formData.password}
+      onChange={handleChange}
+      className={`form-input ${errors.password ? "error" : ""}`}
+    />
+    {errors.password && <span className="field-error">{errors.password}</span>}
+  </div>
 
-              <div className="form-field">
-                <label>Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`form-input ${errors.confirmPassword ? "error" : ""}`}
-                />
-                {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
-              </div>
-            </div>
+  <div className="form-field">
+    <label>Confirm Password</label>
+    <input
+      type="password"
+      name="confirmPassword"
+      value={formData.confirmPassword}
+      onChange={handleChange}
+      className={`form-input ${errors.confirmPassword ? "error" : ""}`}
+    />
+    {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
+  </div>
+</div>
+
 
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Signing up..." : "Sign up"}
