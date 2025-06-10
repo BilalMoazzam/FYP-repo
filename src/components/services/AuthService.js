@@ -1,5 +1,24 @@
-// Complete Auth Service with all password reset functionality
+const API_URL = "http://localhost:5000/api/auth"
+
 const AuthService = {
+  // ✅ Register new user
+  register: async (name, email, password) => {
+    const response = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, password }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Registration failed")
+    }
+
+    return await response.json()
+  },
+
   // Check if user is logged in
   isLoggedIn: () => {
     try {
@@ -16,7 +35,6 @@ const AuthService = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          // For demo, accept any credentials
           const token = "demo-token-" + Math.random().toString(36).substring(2)
           const user = {
             id: 1,
@@ -52,7 +70,6 @@ const AuthService = {
             return
           }
 
-          // Store email for demo purposes (in real app, backend handles this)
           localStorage.setItem("resetEmail", email)
 
           console.log("Reset email sent successfully to:", email)
@@ -74,13 +91,11 @@ const AuthService = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          // For demo, accept tokens that look like valid tokens
           if (!token || token.length < 20) {
             reject(new Error("Invalid or expired reset token"))
             return
           }
 
-          // Check if token is expired (demo: tokens starting with 'expired' are invalid)
           if (token.startsWith("expired")) {
             reject(new Error("Reset token has expired"))
             return
@@ -102,13 +117,11 @@ const AuthService = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          // Validate token
           if (!token || token.length < 20) {
             reject(new Error("Invalid reset token"))
             return
           }
 
-          // Validate password
           if (!newPassword || newPassword.length < 8) {
             reject(new Error("Password must be at least 8 characters long"))
             return
@@ -121,10 +134,7 @@ const AuthService = {
             return
           }
 
-          // For demo, always succeed
           console.log("Password updated successfully")
-
-          // Clear reset email from storage
           localStorage.removeItem("resetEmail")
 
           resolve({
@@ -138,12 +148,10 @@ const AuthService = {
     })
   },
 
-  // Generate demo reset token (for testing)
   generateResetToken: () => {
     return "reset_" + Math.random().toString(36).substring(2) + Date.now().toString(36)
   },
 
-  // Logout user
   logout: () => {
     try {
       localStorage.removeItem("authToken")
@@ -157,7 +165,6 @@ const AuthService = {
     }
   },
 
-  // Get current user
   getCurrentUser: () => {
     try {
       const userStr = localStorage.getItem("user")
@@ -168,7 +175,6 @@ const AuthService = {
     }
   },
 
-  // Get auth token
   getToken: () => {
     return localStorage.getItem("authToken")
   },

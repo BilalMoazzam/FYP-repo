@@ -30,14 +30,24 @@ import { ProductList } from './components/inventory/product-list'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
-  const handleLogin = () => {
-    setIsLoggedIn(true)
+  const handleShowLogoutModal = () => {
+    setShowLogoutModal(true)
+  }
+
+  const handleCloseLogoutModal = () => {
+    setShowLogoutModal(false)
   }
 
   const handleLogout = () => {
     localStorage.clear()
     setIsLoggedIn(false)
+    setShowLogoutModal(false)
+  }
+
+  const handleLogin = () => {
+    setIsLoggedIn(true)
   }
 
   if (!isLoggedIn) {
@@ -59,13 +69,13 @@ function App() {
   return (
     <Router>
       <div className="app">
-        <Sidebar onLogout={handleLogout} />
+        <Sidebar onShowLogoutModal={handleShowLogoutModal} />
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/inventory" element={<InventoryManagement />} />
             <Route path="/barcode-scanner" element={<BarcodeScanner />} />
-            <Route path="/categpry-manager" element={<CategoryManager />} />
+            <Route path="/category-manager" element={<CategoryManager />} />
             <Route path="/product-details" element={<ProductDetails />} />
             <Route path="/product-form" element={<ProductForm />} />
             <Route path="/product-list" element={<ProductList />} />
@@ -80,6 +90,11 @@ function App() {
             <Route path="/logout" element={<Logout onLogout={handleLogout} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+
+          {/* Show logout modal if triggered */}
+          {showLogoutModal && (
+            <Logout onLogout={handleLogout} onCancel={handleCloseLogoutModal} />
+          )}
         </div>
       </div>
     </Router>

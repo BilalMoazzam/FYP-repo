@@ -116,7 +116,7 @@ const HelpSupport = () => {
               </div>
 
               <div className="help-mascot">
-                <img className="mascot-image"/>
+                <p className="mascot-image"/>
               </div>
 
               <div className="search-container">

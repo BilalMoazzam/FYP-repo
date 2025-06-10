@@ -1,157 +1,151 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Header from "../layout/Header"
-import MetricsCards from "../analytics/MetricsCards"
-import SalesChart from "../analytics/SalesChart"
-import InventoryChart from "../analytics/InventoryChart"
-import RegionHeatmap from "../analytics/RegionHeatmap"
-import CustomizableReport from "../analytics/CustomizableReport"
-import ExportReports from "../analytics/ExportReports"
-import { RefreshCw } from "lucide-react"
-import "../styles/AnalyticsReport.css"
+import { useState, useEffect,useCallback } from "react";
+import Header from "../layout/Header";
+import MetricsCards from "../analytics/MetricsCards";
+import SalesChart from "../analytics/SalesChart";
+import InventoryChart from "../analytics/InventoryChart";
+import CustomizableReport from "../analytics/CustomizableReport";
+import ExportReports from "../analytics/ExportReports";
+import { RefreshCw } from "lucide-react";
+import "../styles/AnalyticsReport.css";
 
 const AnalyticsReport = () => {
   const [metrics, setMetrics] = useState({
     totalSales: 0,
     bestSellingProduct: "",
     inventoryHealth: 0,
-  })
+  });
 
-  const [salesData, setSalesData] = useState([])
-  const [inventoryData, setInventoryData] = useState([])
-  const [regionData, setRegionData] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [dateRange, setDateRange] = useState("month")
-  const [lastUpdated, setLastUpdated] = useState("")
+  const [salesData, setSalesData] = useState([]);
+  const [inventoryData, setInventoryData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState("month");
+  const [lastUpdated, setLastUpdated] = useState("");
+
+ const fetchAnalyticsData = useCallback(() => {
+  setLoading(true);
+
+  setTimeout(() => {
+    setMetrics({
+      totalSales: 234600,
+      bestSellingProduct: "Shirts",
+      inventoryHealth: 85,
+    });
+
+    const mockSalesData = generateSalesData(dateRange);
+    setSalesData(mockSalesData);
+
+    const mockInventoryData = generateInventoryData(dateRange);
+    setInventoryData(mockInventoryData);
+
+    const now = new Date();
+    setLastUpdated(now.toLocaleString());
+
+    setLoading(false);
+  }, 1000);
+}, [dateRange]); 
 
   useEffect(() => {
-    // Simulate API call to fetch analytics data
-    fetchAnalyticsData()
-  }, [dateRange])
-
-  const fetchAnalyticsData = () => {
-    setLoading(true)
-
-    // In a real app, this would be an API call with the dateRange parameter
-    setTimeout(() => {
-      // Mock data for metrics
-      setMetrics({
-        totalSales: 234600,
-        bestSellingProduct: "Shirts",
-        inventoryHealth: 85,
-      })
-
-      // Mock data for sales chart
-      const mockSalesData = generateSalesData(dateRange)
-      setSalesData(mockSalesData)
-
-      // Mock data for inventory chart
-      const mockInventoryData = generateInventoryData(dateRange)
-      setInventoryData(mockInventoryData)
-
-      // Mock data for region heatmap
-      const mockRegionData = generateRegionData()
-      setRegionData(mockRegionData)
-
-      // Set last updated timestamp
-      const now = new Date()
-      setLastUpdated(now.toLocaleString())
-
-      setLoading(false)
-    }, 1000)
-  }
+    fetchAnalyticsData();
+  }, [fetchAnalyticsData]);
 
   const generateSalesData = (range) => {
-    const data = []
-    let days = 30
+    const data = [];
+    let days = 30;
 
     if (range === "week") {
-      days = 7
+      days = 7;
     } else if (range === "year") {
-      days = 12 // Months in a year
+      days = 12; // Months in a year
     }
 
     for (let i = 0; i < days; i++) {
-      const value = Math.floor(Math.random() * 10000) + 5000
+      const value = Math.floor(Math.random() * 10000) + 5000;
 
       if (range === "year") {
         // For yearly data, use month names
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
         data.push({
           name: monthNames[i],
           value: value,
-        })
+        });
       } else {
         // For weekly or monthly data, use day numbers
         data.push({
           name: `Day ${i + 1}`,
           value: value,
-        })
+        });
       }
     }
 
-    return data
-  }
+    return data;
+  };
 
   const generateInventoryData = (range) => {
-    const data = []
-    let days = 30
+    const data = [];
+    let days = 30;
 
     if (range === "week") {
-      days = 7
+      days = 7;
     } else if (range === "year") {
-      days = 12 // Months in a year
+      days = 12; // Months in a year
     }
 
     for (let i = 0; i < days; i++) {
-      const value = Math.floor(Math.random() * 500) + 300
+      const value = Math.floor(Math.random() * 500) + 300;
 
       if (range === "year") {
         // For yearly data, use month names
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
         data.push({
           name: monthNames[i],
           value: value,
-        })
+        });
       } else {
         // For weekly or monthly data, use day numbers
         data.push({
           name: `Day ${i + 1}`,
           value: value,
-        })
+        });
       }
     }
 
-    return data
-  }
-
-  const generateRegionData = () => {
-    const regions = ["North", "South", "East", "West", "Central"]
-    const products = ["Shirts", "Pants", "Shoes", "Accessories", "Jackets", "Hats"]
-
-    const data = []
-
-    for (let i = 0; i < regions.length; i++) {
-      for (let j = 0; j < products.length; j++) {
-        data.push({
-          region: regions[i],
-          product: products[j],
-          sales: Math.floor(Math.random() * 1000) + 100,
-        })
-      }
-    }
-
-    return data
-  }
-
+    return data;
+  };
   const handleDateRangeChange = (e) => {
-    setDateRange(e.target.value)
-  }
+    setDateRange(e.target.value);
+  };
 
   const handleRefresh = () => {
-    fetchAnalyticsData()
-  }
+    fetchAnalyticsData();
+  };
 
   return (
     <div className="analytics-report">
@@ -205,16 +199,6 @@ const AnalyticsReport = () => {
                 </div>
               </div>
             </div>
-
-            <div className="section">
-              <div className="section-header">
-                <h3>Sales by Region (Heatmap)</h3>
-              </div>
-              <div className="heatmap-container">
-                <RegionHeatmap data={regionData} />
-              </div>
-            </div>
-
             <div className="section">
               <div className="section-header">
                 <h3>Customizable Report</h3>
@@ -232,7 +216,7 @@ const AnalyticsReport = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AnalyticsReport
+export default AnalyticsReport;

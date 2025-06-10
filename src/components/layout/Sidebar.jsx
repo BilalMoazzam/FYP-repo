@@ -14,10 +14,9 @@ import {
   LogOut,
 } from "lucide-react";
 import "../styles/Sidebar.css";
-import logoImage from '../../assets/logo-Image.png';
+import logoImage from "../../assets/logo-Image.png";
 
-
-const Sidebar = () => {
+const Sidebar = ({ onShowLogoutModal }) => {
   const [notificationCount, setNotificationCount] = useState(0);
 
   // Simulate an API call or logic to get notification count
@@ -27,7 +26,7 @@ const Sidebar = () => {
       // For demo, let's assume we get 5 notifications
       setNotificationCount(5);
     };
-    
+
     fetchNotifications();
   }, []);
 
@@ -41,42 +40,82 @@ const Sidebar = () => {
       </div>
 
       <nav className="nav-menu">
-        <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <LayoutDashboard size={20} />
           <span>Dashboard</span>
         </NavLink>
 
-        <NavLink to="/inventory" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/inventory"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <Package size={20} />
           <span>Inventory Management</span>
         </NavLink>
 
-        <NavLink to="/orders" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/orders"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <ShoppingCart size={20} />
           <span>Order Management</span>
         </NavLink>
 
-        <NavLink to="/supply-chain" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/supply-chain"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <Network size={20} />
           <span>Supply Chain Overview</span>
         </NavLink>
 
-        <NavLink to="/analytics" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/analytics"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <BarChart2 size={20} />
           <span>Analytics & Report</span>
         </NavLink>
 
-        <NavLink to="/users" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/users"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <Users size={20} />
           <span>User Management</span>
         </NavLink>
 
-        <NavLink to="/blockchain" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/blockchain"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <Blocks size={20} />
           <span>Blockchain Transaction</span>
         </NavLink>
 
-        <NavLink to="/notifications" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/notifications"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <div className="notification-icon">
             <Bell size={20} />
             {notificationCount > 0 && (
@@ -86,22 +125,49 @@ const Sidebar = () => {
           <span>Notification Page</span>
         </NavLink>
 
-        <NavLink to="/help" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/help"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <HelpCircle size={20} />
           <span>Help & Support</span>
         </NavLink>
       </nav>
 
       <div className="sidebar-footer">
-        <NavLink to="/settings" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            isActive ? "nav-link active" : "nav-link"
+          }
+        >
           <Settings size={20} />
           <span>Setting</span>
         </NavLink>
 
-        <NavLink to="/logout" className="nav-link">
-          <LogOut size={20} />
+        <button
+          className="nav-link"
+          onClick={onShowLogoutModal}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "12px 20px",
+            color: "#b3b3b3",
+            backgroundColor: "transparent",
+            border: "none",
+            width: "100%",
+            fontSize: "16px",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+          }}
+          onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
+          onMouseLeave={(e) => (e.target.style.color = "#b3b3b3")}
+        >
+          <LogOut size={20} style={{ marginRight: "10px" }} />
           <span>Logout</span>
-        </NavLink>
+        </button>
       </div>
     </div>
   );

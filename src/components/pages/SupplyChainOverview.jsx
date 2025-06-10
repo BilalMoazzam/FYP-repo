@@ -1,47 +1,41 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Header from "../layout/Header"
-import SupplyChainMetrics from "../SupplyChainMetrics"
-import SupplyChainNetwork from "../SupplyChainNetwork"
-import ActiveShipments from "../ActiveShipments"
-import "../styles/SupplyChainOverview.css"
+import { useState, useEffect } from "react";
+import Header from "../layout/Header";
+import SupplyChainMetrics from "../SupplyChainMetrics";
+import SupplyChainNetwork from "../SupplyChainNetwork";
+import ActiveShipments from "../ActiveShipments";
+import "../styles/SupplyChainOverview.css";
 
 const SupplyChainOverview = () => {
   const [metrics, setMetrics] = useState({
     deliveryRate: 0,
     fulfillmentRate: 0,
     blockchainVerification: 0,
-  })
+  });
 
-  const [networkData, setNetworkData] = useState([])
-  const [shipments, setShipments] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [networkData, setNetworkData] = useState([]);
+  const [shipments, setShipments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call to fetch supply chain data
     const fetchSupplyChainData = async () => {
       try {
-        // In a real app, these would be API calls
-        // Simulate loading delay
         setTimeout(() => {
-          // Mock metrics data
           setMetrics({
             deliveryRate: 94.2,
             fulfillmentRate: 98.5,
             blockchainVerification: 100,
-          })
+          });
 
-          // Mock network data - represents nodes in the supply chain
           setNetworkData([
             { id: 1, name: "Factory", type: "manufacturer", x: 50, y: 100, connections: [2, 3] },
             { id: 2, name: "Warehouse A", type: "warehouse", x: 200, y: 50, connections: [4] },
             { id: 3, name: "Warehouse B", type: "warehouse", x: 200, y: 150, connections: [4] },
             { id: 4, name: "Distribution", type: "distribution", x: 350, y: 100, connections: [5] },
             { id: 5, name: "Retail", type: "retail", x: 500, y: 100, connections: [] },
-          ])
+          ]);
 
-          // Mock shipments data
           setShipments([
             {
               id: "#45782",
@@ -79,18 +73,18 @@ const SupplyChainOverview = () => {
               items: 36,
               carrier: "Global Transport Inc.",
             },
-          ])
+          ]);
 
-          setLoading(false)
-        }, 1000)
+          setLoading(false);
+        }, 1000);
       } catch (error) {
-        console.error("Error fetching supply chain data:", error)
-        setLoading(false)
+        console.error("Error fetching supply chain data:", error);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchSupplyChainData()
-  }, [])
+    fetchSupplyChainData();
+  }, []);
 
   return (
     <div className="supply-chain-overview">
@@ -107,7 +101,9 @@ const SupplyChainOverview = () => {
           <div className="loading">Loading supply chain data...</div>
         ) : (
           <>
-            <SupplyChainMetrics metrics={metrics} />
+            <div className="metrics-section">
+              <SupplyChainMetrics metrics={metrics} />
+            </div>
 
             <div className="section">
               <h2 className="section-title">Supply Chain Network</h2>
@@ -126,7 +122,7 @@ const SupplyChainOverview = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SupplyChainOverview
+export default SupplyChainOverview;

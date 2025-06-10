@@ -118,43 +118,46 @@ export const AppProvider = ({ children }) => {
   }, [state.darkMode, state.sidebarCollapsed])
 
   // Login function
-  const login = async (email, password, rememberMe = false) => {
-    try {
-      dispatch({ type: actionTypes.SET_LOADING, payload: true })
+// Login function
+const login = async (email, password, rememberMe = false) => {
+  try {
+    dispatch({ type: actionTypes.SET_LOADING, payload: true })
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    })
 
-      // For demo - accept any email/password
-      if (email && password) {
-        const userData = {
-          id: 1,
-          name: "Demo User",
-          email: email,
-          role: "admin",
-        }
-
-        // Store auth data
-        localStorage.setItem("authToken", "demo-token-123")
-        localStorage.setItem("user", JSON.stringify(userData))
-
-        if (rememberMe) {
-          localStorage.setItem("rememberMe", "true")
-        }
-
-        // Set user in context
-        dispatch({ type: actionTypes.SET_USER, payload: userData })
-        dispatch({ type: actionTypes.SET_LOADING, payload: false })
-
-        return true
-      } else {
-        throw new Error("Email and password are required")
-      }
-    } catch (error) {
-      dispatch({ type: actionTypes.SET_ERROR, payload: error.message })
-      throw error
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Login failed")
     }
+
+    const data = await response.json()
+
+    const userData = data.user
+    const token = data.token
+
+    localStorage.setItem("authToken", token)
+    localStorage.setItem("user", JSON.stringify(userData))
+    if (rememberMe) {
+      localStorage.setItem("rememberMe", "true")
+    }
+
+    dispatch({ type: actionTypes.SET_USER, payload: userData })
+    dispatch({ type: actionTypes.SET_LOADING, payload: false })
+
+    return true
+  } catch (error) {
+    dispatch({ type: actionTypes.SET_ERROR, payload: error.message })
+    throw error
   }
+}
+
+
 
   // Logout function
   const logout = () => {
