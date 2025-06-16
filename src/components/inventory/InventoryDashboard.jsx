@@ -1,39 +1,88 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Package, TrendingDown, AlertTriangle, DollarSign, Plus, Search, Eye, Edit, Trash2 } from "lucide-react"
+import { useState } from "react";
+import {
+  Package,
+  TrendingDown,
+  AlertTriangle,
+  DollarSign,
+  Plus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
+} from "lucide-react";
+import { Button } from "../ui-components";
 
-export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteItem, onViewDetails }) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("")
-  const [statusFilter, setStatusFilter] = useState("")
+export function InventoryDashboard({
+  inventory,
+  onAddItem,
+  onEditItem,
+  onDeleteItem,
+  onViewDetails,
+  onAddToOrder, 
+}) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   // Calculate stats
-  const totalProducts = inventory.length
-  const lowStockItems = inventory.filter((item) => item.status === "Low Stock").length
-  const outOfStockItems = inventory.filter((item) => item.status === "Out of Stock").length
-  const totalValue = inventory.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const LOW_STOCK_THRESHOLD = 9;
 
-  // Filter inventory
+  const totalProducts = inventory.length;
+  const lowStockItems = inventory.filter(
+    (item) => item.status === "Low Stock"
+  ).length;
+  const outOfStockItems = inventory.filter(
+    (item) => item.status === "Out of Stock"
+  ).length;
+  const totalValue = inventory.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  const getItemStatus = (item) => {
+    if (item.quantity === 0) return "Out of Stock";
+    if (item.quantity <= LOW_STOCK_THRESHOLD) return "Low Stock";
+    return "In Stock";
+  };
+
   const filteredInventory = inventory.filter((item) => {
+    const status = getItemStatus(item);
+
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.sku && item.sku.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.size && item.size.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.color && item.color.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesCategory = !categoryFilter || item.category === categoryFilter
-    const matchesStatus = !statusFilter || item.status === statusFilter
+      (item.size &&
+        item.size.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.color &&
+        item.color.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+    const matchesCategory = !categoryFilter || item.category === categoryFilter;
+    const matchesStatus = !statusFilter || status === statusFilter;
+
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
   const getStatusBadge = (status) => {
     const styles = {
-      "In Stock": { backgroundColor: "#dcfce7", color: "#166534", border: "1px solid #bbf7d0" },
-      "Low Stock": { backgroundColor: "#fef3c7", color: "#92400e", border: "1px solid #fde68a" },
-      "Out of Stock": { backgroundColor: "#fee2e2", color: "#991b1b", border: "1px solid #fecaca" },
-    }
+      "In Stock": {
+        backgroundColor: "#dcfce7",
+        color: "#166534",
+        border: "1px solid #bbf7d0",
+      },
+      "Low Stock": {
+        backgroundColor: "#fef3c7",
+        color: "#92400e",
+        border: "1px solid #fde68a",
+      },
+      "Out of Stock": {
+        backgroundColor: "#fee2e2",
+        color: "#991b1b",
+        border: "1px solid #fecaca",
+      },
+    };
 
     return (
       <span
@@ -47,22 +96,30 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
       >
         {status}
       </span>
-    )
-  }
+    );
+  };
 
   const handleEdit = (item) => {
-    onEditItem(item)
-  }
+    onEditItem(item);
+  };
 
   const handleDelete = (itemId) => {
-    if (window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
-      onDeleteItem(itemId)
+    if (
+      window.confirm(
+        "Are you sure you want to delete this product? This action cannot be undone."
+      )
+    ) {
+      onDeleteItem(itemId);
     }
-  }
+  };
 
   const handleView = (item) => {
-    onViewDetails(item)
-  }
+    onViewDetails(item);
+  };
+
+  const handleAddToOrder = (product) => {
+  onAddToOrder(product); // passes to InventoryManagement.jsx to navigate to order page
+};
 
   return (
     <div style={{ padding: "24px" }}>
@@ -84,10 +141,32 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <div>
-              <p style={{ margin: 0, fontSize: "14px", color: "#6b7280", fontWeight: "500" }}>Total Items</p>
-              <p style={{ margin: "8px 0 0 0", fontSize: "32px", fontWeight: "bold", color: "#1f2937" }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "#6b7280",
+                  fontWeight: "500",
+                }}
+              >
+                Total Items
+              </p>
+              <p
+                style={{
+                  margin: "8px 0 0 0",
+                  fontSize: "32px",
+                  fontWeight: "bold",
+                  color: "#1f2937",
+                }}
+              >
                 {totalProducts.toLocaleString()}
               </p>
             </div>
@@ -116,10 +195,32 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <div>
-              <p style={{ margin: 0, fontSize: "14px", color: "#6b7280", fontWeight: "500" }}>Low Stock Items</p>
-              <p style={{ margin: "8px 0 0 0", fontSize: "32px", fontWeight: "bold", color: "#1f2937" }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "#6b7280",
+                  fontWeight: "500",
+                }}
+              >
+                Low Stock Items
+              </p>
+              <p
+                style={{
+                  margin: "8px 0 0 0",
+                  fontSize: "32px",
+                  fontWeight: "bold",
+                  color: "#1f2937",
+                }}
+              >
                 {lowStockItems}
               </p>
             </div>
@@ -148,10 +249,32 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <div>
-              <p style={{ margin: 0, fontSize: "14px", color: "#6b7280", fontWeight: "500" }}>Out of Stock</p>
-              <p style={{ margin: "8px 0 0 0", fontSize: "32px", fontWeight: "bold", color: "#1f2937" }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "#6b7280",
+                  fontWeight: "500",
+                }}
+              >
+                Out of Stock
+              </p>
+              <p
+                style={{
+                  margin: "8px 0 0 0",
+                  fontSize: "32px",
+                  fontWeight: "bold",
+                  color: "#1f2937",
+                }}
+              >
                 {outOfStockItems}
               </p>
             </div>
@@ -180,10 +303,32 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <div>
-              <p style={{ margin: 0, fontSize: "14px", color: "#6b7280", fontWeight: "500" }}>Total Value</p>
-              <p style={{ margin: "8px 0 0 0", fontSize: "32px", fontWeight: "bold", color: "#1f2937" }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "#6b7280",
+                  fontWeight: "500",
+                }}
+              >
+                Total Value
+              </p>
+              <p
+                style={{
+                  margin: "8px 0 0 0",
+                  fontSize: "32px",
+                  fontWeight: "bold",
+                  color: "#1f2937",
+                }}
+              >
                 Rs. {totalValue.toLocaleString()}
               </p>
             </div>
@@ -227,15 +372,35 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
           }}
         >
           <div>
-            <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "600", color: "#1f2937" }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "20px",
+                fontWeight: "600",
+                color: "#1f2937",
+              }}
+            >
               Shalwar Kameez Inventory
             </h2>
-            <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "#6b7280" }}>
+            <p
+              style={{
+                margin: "4px 0 0 0",
+                fontSize: "14px",
+                color: "#6b7280",
+              }}
+            >
               Manage your clothing inventory for men, women, and children
             </p>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              flexWrap: "wrap",
+            }}
+          >
             {/* Search */}
             <div style={{ position: "relative" }}>
               <Search
@@ -281,9 +446,9 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
               }}
             >
               <option value="">All Categories</option>
-              <option value="Men Shalwar Kameez">Men Shalwar Kameez</option>
-              <option value="Women Shalwar Kameez">Women Shalwar Kameez</option>
-              <option value="Children Shalwar Kameez">Children Shalwar Kameez</option>
+              <option value="Men">Men Shalwar Kameez</option>
+              <option value="Women">Women Shalwar Kameez</option>
+              <option value="Child">Children Shalwar Kameez</option>
             </select>
 
             {/* Status Filter */}
@@ -437,40 +602,110 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
                     borderBottom: "1px solid #e5e7eb",
                     transition: "background-color 0.2s",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f9fafb")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
                 >
                   <td style={{ padding: "16px 24px" }}>
                     <div>
-                      <p style={{ margin: 0, fontSize: "14px", fontWeight: "500", color: "#1f2937" }}>{item.name}</p>
-                      <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280" }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          color: "#1f2937",
+                        }}
+                      >
+                        {item.name}
+                      </p>
+                      <p
+                        style={{
+                          margin: "2px 0 0 0",
+                          fontSize: "12px",
+                          color: "#6b7280",
+                        }}
+                      >
                         {item.sku ? `SKU: ${item.sku}` : `ID: ${item.id}`}
                       </p>
                       {item.fabric && (
-                        <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280" }}>Fabric: {item.fabric}</p>
+                        <p
+                          style={{
+                            margin: "2px 0 0 0",
+                            fontSize: "12px",
+                            color: "#6b7280",
+                          }}
+                        >
+                          Fabric: {item.fabric}
+                        </p>
                       )}
                     </div>
                   </td>
-                  <td style={{ padding: "16px 24px", fontSize: "14px", color: "#374151" }}>{item.category}</td>
+                  <td
+                    style={{
+                      padding: "16px 24px",
+                      fontSize: "14px",
+                      color: "#374151",
+                    }}
+                  >
+                    {item.category}
+                  </td>
                   <td style={{ padding: "16px 24px" }}>
                     <div>
-                      <p style={{ margin: 0, fontSize: "14px", color: "#374151", fontWeight: "500" }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: "14px",
+                          color: "#374151",
+                          fontWeight: "500",
+                        }}
+                      >
                         Size: {item.size || "N/A"}
                       </p>
-                      <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280" }}>
+                      <p
+                        style={{
+                          margin: "2px 0 0 0",
+                          fontSize: "12px",
+                          color: "#6b7280",
+                        }}
+                      >
                         Color: {item.color || "N/A"}
                       </p>
                     </div>
                   </td>
-                  <td style={{ padding: "16px 24px", fontSize: "14px", color: "#374151", fontWeight: "500" }}>
+                  <td
+                    style={{
+                      padding: "16px 24px",
+                      fontSize: "14px",
+                      color: "#374151",
+                      fontWeight: "500",
+                    }}
+                  >
                     {item.quantity}
                   </td>
-                  <td style={{ padding: "16px 24px", fontSize: "14px", color: "#374151", fontWeight: "500" }}>
+                  <td
+                    style={{
+                      padding: "16px 24px",
+                      fontSize: "14px",
+                      color: "#374151",
+                      fontWeight: "500",
+                    }}
+                  >
                     Rs. {item.price.toFixed(0)}
                   </td>
-                  <td style={{ padding: "0 10px" }}>{getStatusBadge(item.status)}</td>
                   <td style={{ padding: "0 10px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {getStatusBadge(item.status)}
+                  </td>
+                  <td style={{ padding: "0 10px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
                       <button
                         onClick={() => handleView(item)}
                         style={{
@@ -522,6 +757,41 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
                       >
                         <Trash2 size={16} />
                       </button>
+                      <button
+                        onClick={() => handleAddToOrder(item)} // <-- this function must be passed as a prop
+                        style={{
+                          padding: "6px",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                          color: "#6b7280",
+                          transition: "color 0.2s",
+                        }}
+                        title="Add to Order"
+                        onMouseEnter={(e) => (e.target.style.color = "#f59e0b")} // amber
+                        onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-shopping-cart-plus"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <circle cx="6" cy="19" r="2" />
+                          <circle cx="17" cy="19" r="2" />
+                          <path d="M17 17H6V3H4" />
+                          <path d="M6 5l14 1-1 7H6" />
+                          <path d="M15 10h4m-2 -2v4" />
+                        </svg>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -537,8 +807,13 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
                 color: "#6b7280",
               }}
             >
-              <Package size={48} style={{ margin: "0 auto 16px", opacity: 0.3 }} />
-              <p style={{ margin: 0, fontSize: "16px", fontWeight: "500" }}>No items found</p>
+              <Package
+                size={48}
+                style={{ margin: "0 auto 16px", opacity: 0.3 }}
+              />
+              <p style={{ margin: 0, fontSize: "16px", fontWeight: "500" }}>
+                No items found
+              </p>
               <p style={{ margin: "4px 0 0 0", fontSize: "14px" }}>
                 {searchTerm || categoryFilter || statusFilter
                   ? "Try adjusting your search or filters"
@@ -566,5 +841,5 @@ export function InventoryDashboard({ inventory, onAddItem, onEditItem, onDeleteI
         </div>
       </div>
     </div>
-  )
+  );
 }

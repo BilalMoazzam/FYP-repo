@@ -1,121 +1,171 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ShoppingCart, Clock, Truck, CheckCircle, Plus, Search, Eye, Edit, Trash2 } from "lucide-react"
+import { useEffect, useState } from "react";
+import {
+  ShoppingCart,
+  Clock,
+  Truck,
+  CheckCircle,
+  Plus,
+  Search,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function OrderDashboard({
   orders = [],
   customers = [],
   inventory = [],
+  selectedProduct = null,
   onCreateOrder,
   onEditOrder,
   onDeleteOrder,
   onViewOrder,
   onUpdateOrderStatus,
+  setSelectedProduct,
 }) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("")
-  const [dateFilter, setDateFilter] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
 
-  // Calculate statistics
-  const totalOrders = orders.length
-  const pendingOrders = orders.filter((order) => order.status === "Pending").length
-  const processingOrders = orders.filter((order) => order.status === "Processing").length
-  const shippedOrders = orders.filter((order) => order.status === "Shipped").length
-  const deliveredOrders = orders.filter((order) => order.status === "Delivered").length
-  const cancelledOrders = orders.filter((order) => order.status === "Cancelled").length
+  const [selectedProducts, setSelectedProducts] = useState(() => {
+    const stored = localStorage.getItem("selectedProducts");
+    return stored ? JSON.parse(stored) : [];
+  });
 
-  const totalRevenue = orders
-    .filter((order) => order.status !== "Cancelled")
-    .reduce((sum, order) => sum + order.total, 0)
+  const navigate = useNavigate();
 
-  // Filter orders
-  const filteredOrders = orders.filter((order) => {
+  const handleCreateOrder = () => {
+    navigate("/inventory");
+  };
+
+  useEffect(() => {
+    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+  }, [selectedProducts]);
+
+  useEffect(() => {
+    const localProductList = localStorage.getItem(
+      "selectedProductFromInventory"
+    );
+    if (!localProductList) return;
+
+    const parsedList = JSON.parse(localProductList);
+    const updated = [...selectedProducts, ...parsedList];
+    setSelectedProducts(updated);
+    localStorage.setItem("selectedProducts", JSON.stringify(updated));
+    localStorage.removeItem("selectedProductFromInventory");
+  }, []);
+
+  useEffect(() => {
+    if (!selectedProduct) return;
+
+    const alreadyExists = selectedProducts.some(
+      (p) => p.sku === selectedProduct.sku
+    );
+    if (alreadyExists) {
+      setSelectedProduct(null);
+      return;
+    }
+
+    const updated = [...selectedProducts, selectedProduct];
+    setSelectedProducts(updated);
+    localStorage.setItem("selectedProducts", JSON.stringify(updated));
+    setSelectedProduct(null);
+  }, [selectedProduct]);
+
+  const handleClearSelected = () => {
+    setSelectedProducts([]);
+    localStorage.removeItem("selectedProducts");
+  };
+
+  const draftOrderTotal = selectedProducts.reduce(
+    (sum, p) => sum + (p.price || 0),
+    0
+  );
+  const draftOrder = selectedProducts.length
+    ? {
+        status: "Draft",
+        total: draftOrderTotal,
+      }
+    : null;
+
+  // 🧮 Summary Values (including draft)
+  const totalOrders = orders.length + selectedProducts.length;
+  const pendingOrders =
+    orders.filter((o) => o.status === "Pending").length +
+    selectedProducts.length;
+
+  const processingOrders = orders.filter(
+    (o) => o.status === "Processing"
+  ).length;
+
+  const shippedOrders = orders.filter((o) => o.status === "Shipped").length;
+  const deliveredOrders = orders.filter((o) => o.status === "Delivered").length;
+  const cancelledOrders = orders.filter((o) => o.status === "Cancelled").length;
+
+  const totalRevenue =
+    orders
+      .filter((o) => o.status !== "Cancelled")
+      .reduce((sum, o) => sum + o.total, 0) +
+    selectedProducts.reduce((sum, p) => sum + (p.price || 0), 0);
+
+  const trimmedSearchTerm = searchTerm.trim().toLowerCase();
+
+  const filteredOrders = orders.filter((o) => {
+    const trimmedSearchTerm = searchTerm.trim().toLowerCase();
+
     const matchesSearch =
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase())
+      o.orderNumber?.toLowerCase().includes(trimmedSearchTerm) ||
+      o.customerName?.toLowerCase().includes(trimmedSearchTerm) ||
+      o.customerEmail?.toLowerCase().includes(trimmedSearchTerm);
 
-    const matchesStatus = !statusFilter || order.status === statusFilter
-    const matchesDate = !dateFilter || order.orderDate >= dateFilter
+    const matchesStatus = !statusFilter || o.status === statusFilter;
 
-    return matchesSearch && matchesStatus && matchesDate
-  })
+    const matchesDate =
+      !dateFilter || new Date(o.orderDate) >= new Date(dateFilter);
 
-  const getStatusBadge = (status) => {
-    const statusStyles = {
-      Pending: { backgroundColor: "#fef3c7", color: "#92400e", border: "1px solid #fde68a" },
-      Processing: { backgroundColor: "#dbeafe", color: "#1e40af", border: "1px solid #bfdbfe" },
-      Shipped: { backgroundColor: "#e0e7ff", color: "#3730a3", border: "1px solid #c7d2fe" },
-      Delivered: { backgroundColor: "#dcfce7", color: "#166534", border: "1px solid #bbf7d0" },
-      Cancelled: { backgroundColor: "#fee2e2", color: "#991b1b", border: "1px solid #fecaca" },
+    return matchesSearch && matchesStatus && matchesDate;
+  });
+
+  const handleRemoveFromOrder = (indexToRemove) => {
+    const updated = selectedProducts.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setSelectedProducts(updated);
+    localStorage.setItem("selectedProducts", JSON.stringify(updated));
+    console.log("❌ Removed product at index:", indexToRemove);
+  };
+
+  const handleAddToOrder = (product) => {
+    const alreadyExists = selectedProducts.some((p) => p.sku === product.sku);
+    if (alreadyExists) {
+      console.log("⚠️ Product already exists in selected list:", product.name);
+      return;
     }
 
-    const style = statusStyles[status] || statusStyles.Pending
-
-    return (
-      <span
-        style={{
-          ...style,
-          padding: "4px 12px",
-          borderRadius: "12px",
-          fontSize: "12px",
-          fontWeight: "500",
-          display: "inline-block",
-        }}
-      >
-        {status}
-      </span>
-    )
-  }
-
-  const getPaymentStatusBadge = (status) => {
-    const statusStyles = {
-      Paid: { backgroundColor: "#dcfce7", color: "#166534" },
-      Pending: { backgroundColor: "#fef3c7", color: "#92400e" },
-      Refunded: { backgroundColor: "#fee2e2", color: "#991b1b" },
-    }
-
-    const style = statusStyles[status] || statusStyles.Pending
-
-    return (
-      <span
-        style={{
-          ...style,
-          padding: "2px 8px",
-          borderRadius: "8px",
-          fontSize: "11px",
-          fontWeight: "500",
-        }}
-      >
-        {status}
-      </span>
-    )
-  }
-
-  const handleStatusChange = (orderId, newStatus) => {
-    if (onUpdateOrderStatus) {
-      onUpdateOrderStatus(orderId, newStatus)
-    }
-  }
+    const updated = [...selectedProducts, product];
+    setSelectedProducts(updated);
+    localStorage.setItem("selectedProducts", JSON.stringify(updated));
+    console.log("🛒 Product manually added via button:", product);
+  };
+  const handleBuyNow = (product) => {
+  navigate("/blockchain-transaction", { state: { product } });
+};
 
   return (
     <div className="order-dashboard">
-      {/* Header */}
       <div className="dashboard-header">
         <div className="header-content">
           <div className="header-text">
             <h1>Order Management</h1>
             <p>Track and manage customer orders and shipments</p>
           </div>
-          <button className="create-order-btn" onClick={onCreateOrder}>
+          <button className="create-order-btn" onClick={handleCreateOrder}>
             <Plus size={20} />
             <span>Create New Order</span>
           </button>
         </div>
       </div>
 
-      {/* Statistics Cards */}
       <div className="stats-grid">
         <div className="stat-card total">
           <div className="stat-icon">
@@ -124,7 +174,9 @@ export function OrderDashboard({
           <div className="stat-content">
             <h3>Total Orders</h3>
             <div className="stat-value">{totalOrders}</div>
-            <div className="stat-revenue">Rs. {totalRevenue.toLocaleString()}</div>
+            <div className="stat-revenue">
+              Rs. {totalRevenue.toLocaleString()}
+            </div>
           </div>
         </div>
 
@@ -134,7 +186,12 @@ export function OrderDashboard({
           </div>
           <div className="stat-content">
             <h3>Pending Orders</h3>
-            <div className="stat-value">{pendingOrders}</div>
+            <div className="stat-value">
+              {pendingOrders}
+              {draftOrder && (
+                <span className="text-yellow-600 text-sm ml-2">(Draft)</span>
+              )}
+            </div>
             <div className="stat-sub">Processing: {processingOrders}</div>
           </div>
         </div>
@@ -162,16 +219,13 @@ export function OrderDashboard({
         </div>
       </div>
 
-      {/* Orders Table */}
       <div className="orders-table-section">
-        {/* Table Header with Filters */}
         <div className="table-header">
-          <div className="table-title">
-            <h2>Recent Orders ({filteredOrders.length})</h2>
-          </div>
+          <h2>
+            Recent Orders ({filteredOrders.length + selectedProducts.length})
+          </h2>
 
           <div className="table-filters">
-            {/* Search */}
             <div className="search-box">
               <Search size={16} />
               <input
@@ -182,8 +236,11 @@ export function OrderDashboard({
               />
             </div>
 
-            {/* Status Filter */}
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="filter-select">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="filter-select"
+            >
               <option value="">All Status</option>
               <option value="Pending">Pending</option>
               <option value="Processing">Processing</option>
@@ -192,7 +249,6 @@ export function OrderDashboard({
               <option value="Cancelled">Cancelled</option>
             </select>
 
-            {/* Date Filter */}
             <input
               type="date"
               value={dateFilter}
@@ -202,126 +258,108 @@ export function OrderDashboard({
           </div>
         </div>
 
-        {/* Table */}
-        <div className="table-container">
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>Order Details</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Payment</th>
-                <th>Date</th>
-                <th>Actions</th>
+        {selectedProducts.length > 0 && (
+          <div className="clear-selected-btn-1">
+            <button
+              className="clear-selected-btn-2"
+              onClick={handleClearSelected}
+            >
+              🚫 Clear Selected Products
+            </button>
+          </div>
+        )}
+
+        <div className="table-container order-table-1">
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "separate",
+              borderSpacing: "0 10px",
+            }}
+            className="w-full text-sm text-left text-gray-700 dark:text-gray-300 order-page-data-from-inventory-page"
+          >
+            <thead className="text-xs text-left text-gray-700 uppercase bg-gray-100 dark:bg-gray-800 dark:text-gray-400">
+              <tr className="rounded-md font-bold-1">
+                <td className="px-4 py-3">Order Details</td>
+                <td className="px-4 py-3">Customer</td>
+                <td className="px-4 py-3">Category</td>
+                <td className="px-4 py-3">Total</td>
+                <td className="px-4 py-3">Status</td>
+                <td className="px-4 py-3">Order Items</td>
+                <td className="px-4 py-3">Date</td>
+                <td className="px-4 py-3">Actions</td>
               </tr>
             </thead>
-            <tbody>
-              {filteredOrders.map((order) => (
-                <tr key={order.id} className="order-row">
-                  <td className="order-details">
-                    <div className="order-number">{order.orderNumber}</div>
-                    <div className="order-id">ID: {order.id}</div>
-                    {order.trackingNumber && <div className="tracking-number">Track: {order.trackingNumber}</div>}
-                  </td>
 
-                  <td className="customer-info">
-                    <div className="customer-name">{order.customerName}</div>
-                    <div className="customer-email">{order.customerEmail}</div>
-                    <div className="customer-phone">{order.customerPhone}</div>
+            <tbody className="order-page-data-from-inventory-page">
+              {selectedProducts.map((product, index) => (
+                <tr
+                  key={`${product.sku}-${index}`}
+                  className="bg-yellow-50 font-medium rounded-lg shadow-sm hover:bg-yellow-100 transition duration-150"
+                >
+                  <td className="px-4 py-4">{product.name}</td>
+                  <td className="px-4 py-4">{product.customerName || "N/A"}</td>
+                  <td className="px-4 py-4">{product.category || "Demo"}</td>
+                  <td className="px-4 py-4">Rs. {product.price}</td>
+                  <td className="px-4 py-4">
+                    {product.status || "Out of Stock"}
                   </td>
-
-                  <td className="order-items">
-                    <div className="items-count">{order.items.length} item(s)</div>
-                    <div className="items-preview">
-                      {order.items.slice(0, 2).map((item, index) => (
-                        <div key={index} className="item-preview">
-                          {item.quantity}x {item.productName.split(" - ")[0]}
-                        </div>
-                      ))}
-                      {order.items.length > 2 && <div className="more-items">+{order.items.length - 2} more</div>}
-                    </div>
+                  <td className="px-4 py-4">{product.stock || product.sku}</td>
+                  <td className="px-4 py-4">
+                    {new Date().toLocaleDateString()}
                   </td>
-
-                  <td className="order-total">
-                    <div className="total-amount">Rs. {order.total.toLocaleString()}</div>
-                    <div className="subtotal">Subtotal: Rs. {order.subtotal.toLocaleString()}</div>
-                  </td>
-
-                  <td className="order-status">
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      className="status-select"
-                      disabled={order.status === "Delivered" || order.status === "Cancelled"}
+                  <td className="action-btn-space">
+                    <button
+                      onClick={() => handleRemoveFromOrder(index)}
+                      className="remove-from-order-btn"
                     >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
-                    {order.deliveryDate && <div className="delivery-date">Due: {order.deliveryDate}</div>}
-                  </td>
+                      Remove
+                    </button>
 
-                  <td className="payment-status">
-                    {getPaymentStatusBadge(order.paymentStatus)}
-                    <div className="payment-method">{order.paymentMethod}</div>
-                  </td>
-
-                  <td className="order-date">
-                    <div className="date">{order.orderDate}</div>
-                    {order.deliveredDate && <div className="delivered-date">Delivered: {order.deliveredDate}</div>}
-                    {order.cancelledDate && <div className="cancelled-date">Cancelled: {order.cancelledDate}</div>}
-                  </td>
-
-                  <td className="order-actions">
-                    <div className="action-buttons">
-                      <button className="action-btn view" onClick={() => onViewOrder(order)} title="View Order Details">
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        className="action-btn edit"
-                        onClick={() => onEditOrder(order)}
-                        title="Edit Order"
-                        disabled={order.status === "Delivered" || order.status === "Cancelled"}
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        className="action-btn delete"
-                        onClick={() => onDeleteOrder(order.id)}
-                        title="Delete Order"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleBuyNow(product)}
+                      className="buy-from-order-btn"
+                    >
+                      Buy Now
+                    </button>
                   </td>
                 </tr>
               ))}
+
+              {filteredOrders.map((order) => (
+                <tr
+                  key={order.id}
+                  className="bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150"
+                >
+                  <td className="px-4 py-3">{order.orderDetails}</td>
+                  <td className="px-4 py-3">{order.customer}</td>
+                  <td className="px-4 py-3">{order.items.join(", ")}</td>
+                  <td className="px-4 py-3">Rs. {order.total}</td>
+                  <td className="px-4 py-3">{order.status}</td>
+                  <td className="px-4 py-3">{order.paymentStatus}</td>
+                  <td className="px-4 py-3">{order.date}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      className="text-blue-600 hover:underline"
+                      onClick={() => onViewOrder && onViewOrder(order)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+
+              {filteredOrders.length === 0 && selectedProducts.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="text-center py-4 text-gray-500">
+                    No orders found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
-
-          {filteredOrders.length === 0 && (
-            <div className="empty-state">
-              <ShoppingCart size={48} />
-              <h3>No orders found</h3>
-              <p>
-                {searchTerm || statusFilter || dateFilter
-                  ? "Try adjusting your search or filters"
-                  : "Create your first order to get started"}
-              </p>
-              {!searchTerm && !statusFilter && !dateFilter && (
-                <button className="create-order-btn" onClick={onCreateOrder}>
-                  <Plus size={16} />
-                  Create First Order
-                </button>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>
-  )
+  );
 }

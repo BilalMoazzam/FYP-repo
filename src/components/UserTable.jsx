@@ -1,43 +1,30 @@
-"use client"
+"use client";
 
-import React from "react"
-import { MoreVertical, Edit, Trash2 } from "lucide-react"
+import React, { useEffect, useRef, useState } from "react";
+import { MoreVertical, Edit, Trash2 } from "lucide-react";
 
-const UserTable = ({ users, onDelete, onToggleStatus }) => {
-  const [activeDropdown, setActiveDropdown] = React.useState(null)
+const UserTable = ({ users = [], onDelete, onToggleStatus }) => {
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const dropdownRefs = useRef({});
 
   const toggleDropdown = (userId) => {
-    if (activeDropdown === userId) {
-      setActiveDropdown(null)
-    } else {
-      setActiveDropdown(userId)
+    setActiveDropdown((prev) => (prev === userId ? null : userId));
+  };
+
+  const handleClickOutside = (event) => {
+    const dropdownRef = dropdownRefs.current[activeDropdown];
+    if (dropdownRef && !dropdownRef.contains(event.target)) {
+      setActiveDropdown(null);
     }
-  }
+  };
 
-  const closeDropdown = () => {
-    setActiveDropdown(null)
-  }
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activeDropdown]);
 
-  React.useEffect(() => {
-    // Close dropdown when clicking outside
-    const handleClickOutside = () => {
-      closeDropdown()
-    }
-
-    document.addEventListener("click", handleClickOutside)
-    return () => {
-      document.removeEventListener("click", handleClickOutside)
-    }
-  }, [])
-
-  const handleDropdownClick = (e) => {
-    // Prevent the click from propagating to the document
-    e.stopPropagation()
-  }
-
-  const getStatusClass = (status) => {
-    return status === "Active" ? "status-active" : "status-inactive"
-  }
+  const getStatusClass = (status) =>
+    status === "Active" ? "status-active" : "status-inactive";
 
   return (
     <div className="user-table-container">
@@ -54,47 +41,61 @@ const UserTable = ({ users, onDelete, onToggleStatus }) => {
         </thead>
         <tbody>
           {users.length > 0 ? (
-            users.map((user) => (
-              <tr key={user.id}>
-                <td className="user-cell">
-                  <div className="user-info">
-                    <div className="user-name">{user.name}</div>
-                    <div className="user-email">{user.email}</div>
-                  </div>
-                </td>
-                <td>{user.role}</td>
-                <td>{user.department}</td>
-                <td>
-                  <span className={`status-badge ${getStatusClass(user.status)}`}>{user.status}</span>
-                </td>
-                <td>{user.lastActive}</td>
-                <td className="actions-cell">
-                  <div className="dropdown-container">
-                    <button
-                      className="action-btn dropdown-btn"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toggleDropdown(user.id)
-                      }}
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                    {activeDropdown === user.id && (
-                      <div className="dropdown-menu" onClick={handleDropdownClick}>
-                        <button className="dropdown-item" onClick={() => onToggleStatus(user.id)}>
-                          <Edit size={14} />
-                          <span>{user.status === "Active" ? "Deactivate" : "Activate"}</span>
-                        </button>
-                        <button className="dropdown-item delete" onClick={() => onDelete(user.id)}>
-                          <Trash2 size={14} />
-                          <span>Delete</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))
+            users.map((user, index) => {
+              const userId = user.id || user._id || `user-${index}`;
+              return (
+                <tr key={userId}>
+                  <td className="user-cell">
+                    <div className="user-info">
+                      <div className="user-name">{user.name || "Unnamed"}</div>
+                      <div className="user-email">{user.email || "No Email"}</div>
+                    </div>
+                  </td>
+                  <td>{user.role || "N/A"}</td>
+                  <td>{user.department || "N/A"}</td>
+                  <td>
+                    <span className={`status-badge ${getStatusClass(user.status)}`}>
+                      {user.status || "Unknown"}
+                    </span>
+                  </td>
+                  <td>{user.lastActive || "N/A"}</td>
+                  <td className="actions-cell-1">
+                    <div className="dropdown-container" ref={(el) => (dropdownRefs.current[userId] = el)}>
+                      <button
+                        className="action-btn dropdown-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleDropdown(userId);
+                        }}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+
+                      {activeDropdown === userId && (
+                        <div className="dropdown-menu">
+                          <button
+                            className="dropdown-item"
+                            onClick={() => onToggleStatus(userId)}
+                          >
+                            <Edit size={14} />
+                            <span>
+                              {user.status === "Active" ? "Deactivate" : "Activate"}
+                            </span>
+                          </button>
+                          <button
+                            className="dropdown-item delete"
+                            onClick={() => onDelete(userId)}
+                          >
+                            <Trash2 size={14} />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
           ) : (
             <tr>
               <td colSpan="6" className="no-data">
@@ -105,8 +106,7 @@ const UserTable = ({ users, onDelete, onToggleStatus }) => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default UserTable
-
+export default UserTable;

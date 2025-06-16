@@ -80,7 +80,7 @@ const Introduction = () => {
     <div className="introduction-page">
       {/* Header */}
       <header className="intro-header">
-        <div className="header-content">
+        <div className="header-content-Intro">
           <div className="log">
             <h1>STOCKCHAIN AI</h1>
           </div>

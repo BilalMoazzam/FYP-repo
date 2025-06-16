@@ -17,44 +17,31 @@ const AddUserModal = ({ onClose, onSave }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    })
+    }))
 
-    // Clear error when field is edited
     if (errors[name]) {
-      setErrors({
-        ...errors,
+      setErrors((prev) => ({
+        ...prev,
         [name]: "",
-      })
+      }))
     }
   }
 
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Full name is required"
-    }
-
+    if (!formData.name.trim()) newErrors.name = "Full name is required"
     if (!formData.email.trim()) {
       newErrors.email = "Email is required"
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid"
     }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required"
-    }
-
-    if (!formData.department.trim()) {
-      newErrors.department = "Department is required"
-    }
-
-    if (!formData.role.trim()) {
-      newErrors.role = "Role is required"
-    }
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required"
+    if (!formData.department.trim()) newErrors.department = "Department is required"
+    if (!formData.role.trim()) newErrors.role = "Role is required"
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -62,9 +49,9 @@ const AddUserModal = ({ onClose, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
     if (validateForm()) {
       onSave(formData)
+      onClose() // Close modal after successful save
     }
   }
 
@@ -77,63 +64,35 @@ const AddUserModal = ({ onClose, onSave }) => {
             <X size={20} />
           </button>
         </div>
+
         <div className="modal-body">
           <p className="modal-description">
             Add a new user to your StockChain AI. They will receive an email invitation.
           </p>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={errors.name ? "error" : ""}
-              />
-              {errors.name && <div className="error-message">{errors.name}</div>}
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={errors.email ? "error" : ""}
-              />
-              {errors.email && <div className="error-message">{errors.email}</div>}
-            </div>
+          <form onSubmit={handleSubmit} autoComplete="off">
+            {/* Text Inputs */}
+            {[
+              { label: "Full Name", id: "name", type: "text" },
+              { label: "Email", id: "email", type: "email" },
+              { label: "Phone Number", id: "phone", type: "text" },
+              { label: "Department", id: "department", type: "text" },
+            ].map(({ label, id, type }) => (
+              <div className="form-group" key={id}>
+                <label htmlFor={id}>{label}</label>
+                <input
+                  type={type}
+                  id={id}
+                  name={id}
+                  value={formData[id]}
+                  onChange={handleChange}
+                  className={errors[id] ? "error" : ""}
+                />
+                {errors[id] && <div className="error-message">{errors[id]}</div>}
+              </div>
+            ))}
 
-            <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                type="text"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className={errors.phone ? "error" : ""}
-              />
-              {errors.phone && <div className="error-message">{errors.phone}</div>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="department">Department</label>
-              <input
-                type="text"
-                id="department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className={errors.department ? "error" : ""}
-              />
-              {errors.department && <div className="error-message">{errors.department}</div>}
-            </div>
-
+            {/* Role Select */}
             <div className="form-group">
               <label htmlFor="role">Select Role</label>
               <select
@@ -151,6 +110,7 @@ const AddUserModal = ({ onClose, onSave }) => {
               {errors.role && <div className="error-message">{errors.role}</div>}
             </div>
 
+            {/* Buttons */}
             <div className="modal-footer">
               <button type="button" className="btn btn-cancel" onClick={onClose}>
                 Cancel
@@ -167,4 +127,3 @@ const AddUserModal = ({ onClose, onSave }) => {
 }
 
 export default AddUserModal
-
