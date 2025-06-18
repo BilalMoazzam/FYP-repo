@@ -2,49 +2,71 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getContract } from "../../lib/blockchain";
 import { ethers } from "ethers";
+import "../styles/BlockchainTransaction.css";
 
 export default function BlockchainTransactionPage() {
   const { state } = useLocation();
-  const product = state?.product;
-
+  const [products, setProducts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isPaying, setIsPaying] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState("");
+  const [statusLog, setStatusLog] = useState([]);
+
+  const BLOCKCHAIN_KEY = 'blockchainSelectedProducts';
+
+useEffect(() => {
+  const existing = JSON.parse(localStorage.getItem(BLOCKCHAIN_KEY)) || [];
+
+  if (state?.product) {
+    const isDuplicate = existing.some(p => p.id === state.product.id);
+    if (!isDuplicate) {
+      const updated = [...existing, state.product];
+      localStorage.setItem(BLOCKCHAIN_KEY, JSON.stringify(updated));
+      setProducts(updated);
+    } else {
+      setProducts(existing);
+    }
+  } else {
+    setProducts(existing);
+  }
+}, [state?.product?.id]);
+
+const removeProduct = (id) => {
+  const existing = JSON.parse(localStorage.getItem(BLOCKCHAIN_KEY)) || [];
+  const indexToRemove = existing.findIndex(p => p.id === id);
+  const updated = [...existing.slice(0, indexToRemove), ...existing.slice(indexToRemove + 1)];
+  localStorage.setItem(BLOCKCHAIN_KEY, JSON.stringify(updated));
+  setProducts(updated);
+};
+
 
   const loadTransactions = async () => {
     try {
       setLoading(true);
       const contract = await getContract();
-
       const count = await contract.getTransactionCount();
-      const txCount = count.toNumber ? count.toNumber() : count;
+      const txCount = count.toNumber ? count.toNumber() : parseInt(count);
 
       const allTx = [];
       for (let i = 0; i < txCount; i++) {
-        try {
-          const tx = await contract.getTransaction(i);
-          allTx.push({
-            txId: tx.txId,
-            from: tx.fromEntity,
-            to: tx.toEntity,
-            type: tx.txType,
-            description: tx.description,
-            quantity: tx.quantity.toString(),
-            status: tx.status,
-            timestamp: new Date(tx.timestamp.toNumber() * 1000).toLocaleString(),
-          });
-        } catch (txError) {
-          console.warn(`Failed to fetch transaction at index ${i}`, txError);
-        }
+        const tx = await contract.getTransaction(i);
+        const structured = {
+          txId: tx.txId,
+          from: tx.fromEntity,
+          to: tx.toEntity,
+          type: tx.txType,
+          description: tx.description,
+          quantity: tx.quantity.toString(),
+          status: tx.status,
+          timestamp: new Date(tx.timestamp.toNumber() * 1000).toLocaleString(),
+        };
+        allTx.push(structured);
       }
 
       setTransactions(allTx.reverse());
-      setError(null);
     } catch (err) {
-      console.error("Failed to fetch blockchain transactions", err);
-      setError(err.message || "Unknown error");
+      console.error("Error loading transactions:", err);
     } finally {
       setLoading(false);
     }
@@ -57,131 +79,204 @@ export default function BlockchainTransactionPage() {
   const handlePayment = async () => {
     try {
       if (!window.ethereum) {
-        alert("MetaMask not detected. Please install it.");
+        alert("MetaMask not detected.");
         return;
       }
 
       setIsPaying(true);
-      setPaymentStatus("🔄 Connecting to MetaMask...");
+      setPaymentStatus("🔄 Connecting MetaMask...");
 
       const provider = new ethers.BrowserProvider(window.ethereum);
+      let accounts = await window.ethereum.request({ method: "eth_accounts" });
+
+      if (!accounts || accounts.length === 0) {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+      }
+
       const signer = await provider.getSigner();
       const contract = await getContract(signer);
 
-      setPaymentStatus("⏳ Sending transaction to blockchain...");
+      for (const product of products) {
+        const tx = await contract.recordTransaction(
+          "tx-" + Date.now(),
+          "User",
+          "Shop",
+          "Purchase",
+          product?.name || "Unnamed Product",
+          1,
+          "Confirmed"
+        );
 
-      const tx = await contract.recordTransaction(
-        "tx-" + Date.now(),
-        "User",
-        "Shop",
-        "Purchase",
-        product?.name || "Unknown",
-        1,
-        "Confirmed"
-      );
+        await tx.wait();
 
-      await tx.wait();
+        setStatusLog((prev) => [
+          {
+            time: new Date().toLocaleString(),
+            status: "Accepted",
+            product,
+          },
+          ...prev,
+        ]);
+      }
 
-      setPaymentStatus("✅ Payment confirmed and transaction recorded!");
-      await loadTransactions(); // Refresh after success
+      setPaymentStatus("✅ All payments confirmed and transactions recorded!");
+      await loadTransactions();
+
+      localStorage.removeItem("selectedProducts");
+      setProducts([]);
+
     } catch (err) {
-      console.error("Payment failed", err);
-      setPaymentStatus("❌ Payment failed or cancelled.");
+      console.error("Payment failed:", err);
+      setPaymentStatus("❌ Payment failed or denied.");
+      products.forEach((product) => {
+        setStatusLog((prev) => [
+          {
+            time: new Date().toLocaleString(),
+            status: "Declined",
+            product,
+          },
+          ...prev,
+        ]);
+      });
     } finally {
       setIsPaying(false);
     }
   };
 
   return (
-    <div style={{ padding: "30px", fontFamily: "Arial, sans-serif", maxWidth: "900px", margin: "auto" }}>
-      <h2 style={{ marginBottom: "20px" }}>🧾 Blockchain Transactions</h2>
+    <div className="bt-container">
+      <h1 className="bt-heading">Blockchain Transactions</h1>
 
-      {product && (
-        <div style={{ border: "2px solid #ccc", borderRadius: "10px", padding: "20px", marginBottom: "30px", backgroundColor: "#f9f9f9" }}>
-          <h3>🛍️ Product Selected for Purchase</h3>
-          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
-            <tbody>
-              <tr><td style={{ padding: "8px", fontWeight: "bold" }}>Name:</td><td>{product.name}</td></tr>
-              <tr><td style={{ padding: "8px", fontWeight: "bold" }}>Price:</td><td>Rs. {product.price}</td></tr>
-              <tr><td style={{ padding: "8px", fontWeight: "bold" }}>SKU:</td><td>{product.sku || "N/A"}</td></tr>
-              <tr><td style={{ padding: "8px", fontWeight: "bold" }}>Status:</td><td>{product.status || "In Stock"}</td></tr>
-            </tbody>
-          </table>
-
-          <button
-            onClick={handlePayment}
-            disabled={isPaying}
-            style={{
-              marginTop: "20px",
-              padding: "10px 20px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: isPaying ? "not-allowed" : "pointer",
-              fontSize: "16px"
-            }}
-          >
-            {isPaying ? "Processing..." : "Confirm & Pay with MetaMask"}
-          </button>
-
-          {paymentStatus && (
-            <p style={{ marginTop: "15px", color: paymentStatus.startsWith("✅") ? "green" : "red" }}>
-              {paymentStatus}
-            </p>
-          )}
-        </div>
-      )}
-
-      <h2 style={{ marginBottom: "15px" }}>📜 Transaction History</h2>
-
-      {loading && <p>🔄 Loading transactions...</p>}
-      {error && <p style={{ color: "red" }}>❌ Error: {error}</p>}
-      {!loading && transactions.length === 0 && <p>📭 No transactions found.</p>}
-
-      {!loading && transactions.length > 0 && (
-        <div style={{ border: "1px solid #ddd", borderRadius: "10px", overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead style={{ backgroundColor: "#f2f2f2" }}>
+      {products.length > 0 && (
+        <div className="bt-section bt-product-payment">
+          <h3 className="bt-subheading">🛍️ Selected Products</h3>
+          <table className="bt-detail-table">
+            <thead>
               <tr>
-                <th style={thStyle}>Tx ID</th>
-                <th style={thStyle}>From</th>
-                <th style={thStyle}>To</th>
-                <th style={thStyle}>Type</th>
-                <th style={thStyle}>Description</th>
-                <th style={thStyle}>Qty</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Timestamp</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>SKU</th>
+                <th>ID</th>
+                <th>Size</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {transactions.map((tx, idx) => (
-                <tr key={idx} style={{ borderBottom: "1px solid #ccc" }}>
-                  <td style={tdStyle}>{tx.txId}</td>
-                  <td style={tdStyle}>{tx.from}</td>
-                  <td style={tdStyle}>{tx.to}</td>
-                  <td style={tdStyle}>{tx.type}</td>
-                  <td style={tdStyle}>{tx.description}</td>
-                  <td style={tdStyle}>{tx.quantity}</td>
-                  <td style={tdStyle}>{tx.status}</td>
-                  <td style={tdStyle}>{tx.timestamp}</td>
+              {products.map((product, idx) => (
+                <tr key={idx}>
+                  <td>{product.name}</td>
+                  <td>Rs. {product.price}</td>
+                  <td>{product.sku || "N/A"}</td>
+                  <td>{product.id || "N/A"}</td>
+                  <td>{product.size || "Standard"}</td>
+                  <td>{product.status || "In Stock"}</td>
+                  <td>
+                    <button onClick={() => removeProduct(product.id)} className="remove-from-order-btn">Remove</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          <div className="bt-payment-method">
+            <h4 className="bt-subheading">💳 Payment Method</h4>
+            <p>Payment via <strong>MetaMask Wallet</strong></p>
+
+            <button
+              onClick={handlePayment}
+              disabled={isPaying}
+              className="bt-pay-btn"
+            >
+              {isPaying ? "Processing..." : "Confirm & Pay for All"}
+            </button>
+
+            {paymentStatus && (
+              <p className={`bt-status-message ${paymentStatus.startsWith("✅") ? "success" : "error"}`}>
+                {paymentStatus}
+              </p>
+            )}
+          </div>
         </div>
       )}
+
+      <div className="bt-section">
+        <h3 className="bt-subheading">📜 Blockchain Transaction History</h3>
+        {loading && <p className="bt-loading">Loading transactions...</p>}
+
+        {!loading && transactions.length > 0 && (
+          <div className="bt-table-wrapper">
+            <table className="bt-transaction-table">
+              <thead>
+                <tr>
+                  <th>Tx ID</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Qty</th>
+                  <th>Status</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((tx, idx) => (
+                  <tr key={idx}>
+                    <td>{tx.txId}</td>
+                    <td>{tx.from}</td>
+                    <td>{tx.to}</td>
+                    <td>{tx.type}</td>
+                    <td>{tx.description}</td>
+                    <td>{tx.quantity}</td>
+                    <td className={tx.status === "Confirmed" ? "bt-status-success" : "bt-status-failed"}>
+                      {tx.status}
+                    </td>
+                    <td>{tx.timestamp}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="bt-section">
+        <h3 className="bt-subheading">📦 Payment Status Log</h3>
+        <div className="bt-table-wrapper">
+          <table className="bt-transaction-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Size</th>
+                <th>Price</th>
+                <th>SKU</th>
+              </tr>
+            </thead>
+            <tbody>
+              {statusLog.length === 0 ? (
+                <tr><td colSpan="7">No payment log available yet.</td></tr>
+              ) : (
+                statusLog.map((log, index) => (
+                  <tr key={index}>
+                    <td>{log.time}</td>
+                    <td className={log.status === "Accepted" ? "bt-status-success" : "bt-status-failed"}>
+                      {log.status}
+                    </td>
+                    <td>{log.product.name}</td>
+                    <td>{log.product.id || "N/A"}</td>
+                    <td>{log.product.size || "N/A"}</td>
+                    <td>Rs. {log.product.price}</td>
+                    <td>{log.product.sku || "N/A"}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
-
-const thStyle = {
-  padding: "10px",
-  borderBottom: "2px solid #ccc",
-  textAlign: "left",
-};
-
-const tdStyle = {
-  padding: "10px",
-  textAlign: "left",
-};

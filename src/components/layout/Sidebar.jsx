@@ -101,7 +101,7 @@ const Sidebar = ({ onShowLogoutModal }) => {
         </NavLink>
 
         <NavLink
-          to="/blockchain"
+          to="/blockchain-transaction"
           className={({ isActive }) =>
             isActive ? "nav-link active" : "nav-link"
           }

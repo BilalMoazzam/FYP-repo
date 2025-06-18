@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import {
   Package,
@@ -20,11 +21,12 @@ export function InventoryDashboard({
   onEditItem,
   onDeleteItem,
   onViewDetails,
-  onAddToOrder, 
+  onAddToOrder,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [expandedRowId, setExpandedRowId] = useState(null);
 
   // Calculate stats
   const LOW_STOCK_THRESHOLD = 9;
@@ -118,8 +120,8 @@ export function InventoryDashboard({
   };
 
   const handleAddToOrder = (product) => {
-  onAddToOrder(product); // passes to InventoryManagement.jsx to navigate to order page
-};
+    onAddToOrder(product); // passes to InventoryManagement.jsx to navigate to order page
+  };
 
   return (
     <div style={{ padding: "24px" }}>
@@ -594,209 +596,157 @@ export function InventoryDashboard({
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {filteredInventory.map((item, index) => (
-                <tr
-                  key={item.id}
-                  style={{
-                    borderBottom: "1px solid #e5e7eb",
-                    transition: "background-color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#f9fafb")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "transparent")
-                  }
-                >
-                  <td style={{ padding: "16px 24px" }}>
-                    <div>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          color: "#1f2937",
-                        }}
-                      >
-                        {item.name}
-                      </p>
-                      <p
-                        style={{
-                          margin: "2px 0 0 0",
-                          fontSize: "12px",
-                          color: "#6b7280",
-                        }}
-                      >
-                        {item.sku ? `SKU: ${item.sku}` : `ID: ${item.id}`}
-                      </p>
-                      {item.fabric && (
-                        <p
-                          style={{
-                            margin: "2px 0 0 0",
-                            fontSize: "12px",
-                            color: "#6b7280",
-                          }}
-                        >
-                          Fabric: {item.fabric}
-                        </p>
-                      )}
-                    </div>
-                  </td>
-                  <td
-                    style={{
-                      padding: "16px 24px",
-                      fontSize: "14px",
-                      color: "#374151",
-                    }}
-                  >
-                    {item.category}
-                  </td>
-                  <td style={{ padding: "16px 24px" }}>
-                    <div>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: "14px",
-                          color: "#374151",
-                          fontWeight: "500",
-                        }}
-                      >
-                        Size: {item.size || "N/A"}
-                      </p>
-                      <p
-                        style={{
-                          margin: "2px 0 0 0",
-                          fontSize: "12px",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Color: {item.color || "N/A"}
-                      </p>
-                    </div>
-                  </td>
-                  <td
-                    style={{
-                      padding: "16px 24px",
-                      fontSize: "14px",
-                      color: "#374151",
-                      fontWeight: "500",
-                    }}
-                  >
-                    {item.quantity}
-                  </td>
-                  <td
-                    style={{
-                      padding: "16px 24px",
-                      fontSize: "14px",
-                      color: "#374151",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Rs. {item.price.toFixed(0)}
-                  </td>
-                  <td style={{ padding: "0 10px" }}>
-                    {getStatusBadge(item.status)}
-                  </td>
-                  <td style={{ padding: "0 10px" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <button
-                        onClick={() => handleView(item)}
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "transparent",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          color: "#6b7280",
-                          transition: "color 0.2s",
-                        }}
-                        title="View Details"
-                        onMouseEnter={(e) => (e.target.style.color = "#3b82f6")}
-                        onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleEdit(item)}
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "transparent",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          color: "#6b7280",
-                          transition: "color 0.2s",
-                        }}
-                        title="Edit"
-                        onMouseEnter={(e) => (e.target.style.color = "#10b981")}
-                        onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "transparent",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          color: "#6b7280",
-                          transition: "color 0.2s",
-                        }}
-                        title="Delete"
-                        onMouseEnter={(e) => (e.target.style.color = "#ef4444")}
-                        onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleAddToOrder(item)} // <-- this function must be passed as a prop
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "transparent",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          color: "#6b7280",
-                          transition: "color 0.2s",
-                        }}
-                        title="Add to Order"
-                        onMouseEnter={(e) => (e.target.style.color = "#f59e0b")} // amber
-                        onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="icon icon-tabler icon-tabler-shopping-cart-plus"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <circle cx="6" cy="19" r="2" />
-                          <circle cx="17" cy="19" r="2" />
-                          <path d="M17 17H6V3H4" />
-                          <path d="M6 5l14 1-1 7H6" />
-                          <path d="M15 10h4m-2 -2v4" />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {filteredInventory.map((item) => (
+  <React.Fragment key={item.id}>
+    <tr
+      style={{
+        borderBottom: "1px solid #e5e7eb",
+        transition: "background-color 0.2s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+    >
+      <td style={{ padding: "16px 24px" }}>
+        <div>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "14px",
+              fontWeight: "500",
+              color: "#1f2937",
+            }}
+          >
+            {item.name}
+          </p>
+          <p
+            style={{
+              margin: "2px 0 0 0",
+              fontSize: "12px",
+              color: "#6b7280",
+            }}
+          >
+            {item.sku ? `SKU: ${item.sku}` : `ID: ${item.id}`}
+          </p>
+          {item.fabric && (
+            <p
+              style={{
+                margin: "2px 0 0 0",
+                fontSize: "12px",
+                color: "#6b7280",
+              }}
+            >
+              Fabric: {item.fabric}
+            </p>
+          )}
+        </div>
+      </td>
+      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#374151" }}>
+        {item.category}
+      </td>
+      <td style={{ padding: "16px 24px" }}>
+        <div>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "14px",
+              color: "#374151",
+              fontWeight: "500",
+            }}
+          >
+            Size: {item.size || "N/A"}
+          </p>
+          <p
+            style={{
+              margin: "2px 0 0 0",
+              fontSize: "12px",
+              color: "#6b7280",
+            }}
+          >
+            Color: {item.color || "N/A"}
+          </p>
+        </div>
+      </td>
+      <td
+        style={{
+          padding: "16px 24px",
+          fontSize: "14px",
+          color: "#374151",
+          fontWeight: "500",
+        }}
+      >
+        {item.quantity}
+      </td>
+      <td
+        style={{
+          padding: "16px 24px",
+          fontSize: "14px",
+          color: "#374151",
+          fontWeight: "500",
+        }}
+      >
+        Rs. {item.price.toFixed(0)}
+      </td>
+      <td style={{ padding: "0 10px" }}>{getStatusBadge(item.status)}</td>
+      <td style={{ padding: "0 10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button onClick={() => handleView(item)} title="View Details"> <Eye size={16} /> </button>
+          <button onClick={() => handleEdit(item)} title="Edit"> <Edit size={16} /> </button>
+          <button onClick={() => handleDelete(item.id)} title="Delete"> <Trash2 size={16} /> </button>
+
+          {/* Expand/Collapse Toggle */}
+          <button
+            onClick={() =>
+              setExpandedRowId(expandedRowId === item.id ? null : item.id)
+            }
+            style={{
+              padding: "6px",
+              border: "none",
+              backgroundColor: "transparent",
+              borderRadius: "4px",
+              cursor: "pointer",
+              color: "#6b7280",
+              transition: "color 0.2s",
+            }}
+            title={expandedRowId === item.id ? "Collapse" : "Show Options"}
+            onMouseEnter={(e) => (e.target.style.color = "#3b82f6")}
+            onMouseLeave={(e) => (e.target.style.color = "#6b7280")}
+          >
+            {expandedRowId === item.id ? "▼" : "▶"}
+          </button>
+        </div>
+      </td>
+    </tr>
+
+    {/* Expanded Row */}
+    {expandedRowId === item.id && (
+      <tr>
+        <td colSpan="7" style={{ backgroundColor: "#f9fafb", padding: "16px 24px" }}>
+          <div style={{ textAlign: "left" }}>
+            <p style={{ fontSize: "14px", marginBottom: "12px", color: "#374151" }}>
+              <strong>Add this product to order:</strong>
+            </p>
+            <button
+              onClick={() => handleAddToOrder(item)}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#f59e0b",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: "pointer",
+              }}
+            >
+              🛒 Add to Order
+            </button>
+          </div>
+        </td>
+      </tr>
+    )}
+  </React.Fragment>
+))}
+
           </table>
 
           {filteredInventory.length === 0 && (
