@@ -1,0 +1,83 @@
+.logout-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.logout-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout-confirmation-modal {
+  background-color: #ffc107;
+  border-radius: 8px;
+  padding: 20px 30px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 90%;
+  width: 320px;
+}
+
+.confirmation-content h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-yes,
+.btn-no {
+  padding: 8px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-yes {
+  background-color: #000;
+  color: #fff;
+}
+
+.btn-yes:hover {
+  background-color: #333;
+}
+
+.btn-no {
+  background-color: #333;
+  color: #fff;
+}
+
+.btn-no:hover {
+  background-color: #444;
+}
+
+.btn-yes:disabled,
+.btn-no:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Add this to your global CSS to prevent scrolling when logout modal is active */
+body.logout-page-active {
+  overflow: hidden;
+}

@@ -1,0 +1,60 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header-left h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.breadcrumbs span {
+  margin-right: 5px;
+}
+
+.breadcrumbs .separator {
+  margin: 0 5px;
+}
+
+.breadcrumbs .active {
+  color: #333;
+  font-weight: 500;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #f0f0f0;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+

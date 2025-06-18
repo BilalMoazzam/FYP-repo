@@ -1,0 +1,168 @@
+.bt-container {
+  max-width: 960px;
+  margin: auto;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.bt-heading {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.bt-product-card {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  background-color: #fafafa;
+}
+
+.bt-product-table td {
+  padding: 6px 10px;
+}
+
+.bt-pay-btn {
+  margin-top: 15px;
+  padding: 10px 18px;
+  font-size: 16px;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.bt-status-message {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.bt-status-message.success {
+  color: green;
+}
+
+.bt-status-message.error {
+  color: red;
+}
+
+.bt-subheading {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.bt-transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bt-transaction-table th,
+.bt-transaction-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.bt-status-success {
+  color: green;
+  font-weight: bold;
+}
+
+.bt-status-failed {
+  color: red;
+  font-weight: bold;
+}
+.bt-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.bt-heading {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.bt-subheading {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.bt-section {
+  margin-bottom: 3rem;
+}
+
+.bt-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.bt-detail-table td {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+.bt-detail-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.bt-payment-method {
+  padding: 1rem 0;
+  border-top: 2px solid #eee;
+}
+
+.bt-payment-method p {
+  margin-bottom: 1rem;
+}
+
+.bt-pay-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.bt-status-message.success {
+  margin-top: 1rem;
+  color: green;
+}
+
+.bt-status-message.error {
+  margin-top: 1rem;
+  color: red;
+  padding: 12px;
+  width: 27%;
+}
+
+.bt-table-wrapper {
+  overflow-x: auto;
+}
+
+.bt-transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bt-transaction-table th,
+.bt-transaction-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.bt-status-success {
+  color: green;
+  font-weight: bold;
+}
+
+.bt-status-failed {
+  color: red;
+  font-weight: bold;
+  
+}

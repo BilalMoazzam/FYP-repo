@@ -1,0 +1,228 @@
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "txId",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "fromEntity",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "toEntity",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "txType",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "quantity",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "status",
+				"type": "string"
+			}
+		],
+		"name": "TransactionRecorded",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "index",
+				"type": "uint256"
+			}
+		],
+		"name": "getTransaction",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "txId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "fromEntity",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "toEntity",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "txType",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "status",
+						"type": "string"
+					}
+				],
+				"internalType": "struct SupplyChainTransactions.Transaction",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getTransactionCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_txId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_from",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_to",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_txType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_description",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_status",
+				"type": "string"
+			}
+		],
+		"name": "recordTransaction",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "transactions",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "txId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "fromEntity",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "toEntity",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "txType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "status",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

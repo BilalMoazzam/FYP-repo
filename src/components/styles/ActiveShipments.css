@@ -1,0 +1,147 @@
+.active-shipments {
+    width: 100%;
+  }
+  
+  .no-shipments {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .shipments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .shipment-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .shipment-header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .shipment-header:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .shipment-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #666;
+  }
+  
+  .shipment-id {
+    font-weight: 500;
+    flex: 1;
+  }
+  
+  .shipment-status {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 12px;
+  }
+  
+  .status-in-transit {
+    background-color: #fff8e1;
+    color: #f59e0b;
+  }
+  
+  .status-on-time {
+    background-color: #e8f5e9;
+    color: #10b981;
+  }
+  
+  .status-delayed {
+    background-color: #fee2e2;
+    color: #ef4444;
+  }
+  
+  .shipment-toggle {
+    color: #666;
+  }
+  
+  .shipment-details {
+    padding: 16px;
+    border-top: 1px solid #eee;
+    background-color: #fff;
+  }
+  
+  .detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  
+  .detail-item {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 8px;
+  }
+  
+  .detail-label {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  
+  .detail-label svg {
+    margin-right: 6px;
+  }
+  
+  .detail-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .shipment-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-track {
+    background-color: #4f46e5;
+    color: #fff;
+  }
+  
+  .btn-track:hover {
+    background-color: #4338ca;
+  }
+  
+  .btn-details {
+    background-color: #f3f4f6;
+    color: #333;
+  }
+  
+  .btn-details:hover {
+    background-color: #e5e7eb;
+  }
+  
+  

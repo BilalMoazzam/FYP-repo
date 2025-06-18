@@ -1,0 +1,286 @@
+/* Modal Overlay - Portal rendered at body level */
+.logout-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Backdrop */
+  .logout-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  
+  /* Modal Container */
+  .logout-modal {
+    position: relative;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    max-width: 90vw;
+    width: 420px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000000;
+  }
+  
+  /* Modal Content */
+  .logout-modal-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Modal Header */
+  .logout-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 0 24px;
+    border-bottom: none;
+  }
+  
+  .logout-modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+  }
+  
+  .logout-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logout-modal-close:hover {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  
+  /* Modal Body */
+  .logout-modal-body {
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .logout-icon {
+    margin: 0 auto 16px;
+    width: 48px;
+    height: 48px;
+    color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logout-modal-body p {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin: 0 0 8px 0;
+  }
+  
+  .logout-subtitle {
+    font-size: 14px;
+    color: #666;
+    display: block;
+  }
+  
+  /* Modal Buttons */
+  .logout-modal-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 0 24px 24px 24px;
+    justify-content: flex-end;
+  }
+  
+  .btn-cancel,
+  .btn-logout {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    justify-content: center;
+  }
+  
+  .btn-cancel {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+  }
+  
+  .btn-cancel:hover:not(:disabled) {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+  }
+  
+  .btn-logout {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .btn-logout:hover:not(:disabled) {
+    background-color: #c82333;
+  }
+  
+  .btn-cancel:disabled,
+  .btn-logout:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Loading Spinner */
+  .loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* BLUR EFFECT - Applied to page content when modal is open */
+  body.logout-modal-open {
+    overflow: hidden;
+  }
+  
+  body.logout-modal-open .app {
+    filter: blur(4px);
+    transition: filter 0.3s ease;
+  }
+  
+  body.logout-modal-open .content {
+    filter: blur(4px);
+    transition: filter 0.3s ease;
+  }
+  
+  body.logout-modal-open .sidebar {
+    filter: blur(4px);
+    transition: filter 0.3s ease;
+  }
+  
+  /* Ensure modal is never blurred */
+  .logout-modal-overlay,
+  .logout-modal,
+  .logout-modal-content {
+    filter: none !important;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .logout-modal {
+      width: 95vw;
+      margin: 20px;
+    }
+  
+    .logout-modal-buttons {
+      flex-direction: column;
+    }
+  
+    .btn-cancel,
+    .btn-logout {
+      width: 100%;
+    }
+  }
+  
+  /* Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    .logout-modal {
+      background: #2d3748;
+      color: #e2e8f0;
+    }
+  
+    .logout-modal-header h2 {
+      color: #e2e8f0;
+    }
+  
+    .logout-modal-close {
+      color: #a0aec0;
+    }
+  
+    .logout-modal-close:hover {
+      background-color: #4a5568;
+      color: #e2e8f0;
+    }
+  
+    .logout-modal-body p {
+      color: #e2e8f0;
+    }
+  
+    .logout-subtitle {
+      color: #a0aec0;
+    }
+  
+    .btn-cancel {
+      background-color: #4a5568;
+      color: #e2e8f0;
+      border-color: #718096;
+    }
+  
+    .btn-cancel:hover:not(:disabled) {
+      background-color: #2d3748;
+    }
+  }
+  
